@@ -3,117 +3,150 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Product Filtering System</title>
+  <title>Notes Application</title>
   <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
   <style>
-    body { background: #f4f6f9; }
-    .product-icon { font-size: 48px; }
-    .product-card { transition: transform 0.3s; }
-    .product-card:hover { transform: translateY(-5px); }
-    .price { color: #dc3545; font-size: 18px; font-weight: 800; }
+    body { background: #fff8e1; }
+    /* Sticky note card style */
+    .note-card { border-radius: 10px; border: none; box-shadow: 2px 4px 10px rgba(0,0,0,0.1);
+                 transition: transform 0.2s; }
+    .note-card:hover { transform: rotate(-1deg) scale(1.02); }
+    /* Masonry-like column layout */
+    .notes-grid { columns: 3 220px; gap: 16px; }
+    .note-card-wrap { break-inside: avoid; margin-bottom: 16px; }
+    .delete-note { opacity: 0; transition: opacity 0.2s; }
+    .note-card:hover .delete-note { opacity: 1; }
+    /* Color dot picker */
+    .color-dot { width: 24px; height: 24px; border-radius: 50%; cursor: pointer;
+                 border: 3px solid transparent; display: inline-block; transition: border-color 0.2s; }
+    .color-dot.selected { border-color: #333; }
   </style>
 </head>
 <body>
 
-<nav class="navbar navbar-dark bg-dark mb-4">
+<!-- Bootstrap navbar -->
+<nav class="navbar bg-warning navbar-expand">
   <div class="container">
-    <span class="navbar-brand fw-bold">🔍 Product Filtering System</span>
-    <span class="badge bg-light text-dark fs-6" id="countDisplay">0 products</span>
+    <span class="navbar-brand fw-bold">📝 Notes App</span>
+    <span class="badge bg-dark" id="countBar">0 notes</span>
   </div>
 </nav>
 
-<div class="container pb-4">
+<div class="container py-4">
 
-  <!-- FILTER BUTTONS: Bootstrap btn-group -->
-  <div class="d-flex flex-wrap gap-2 justify-content-center mb-4" id="filterBar">
-    <button class="btn btn-dark active" onclick="filterProducts('All', this)">All</button>
+  <!-- ADD NOTE CARD: Bootstrap card form -->
+  <div class="card shadow mb-4">
+    <div class="card-body">
+      <div class="mb-2">
+        <input type="text" id="noteTitle" class="form-control fw-bold"
+          placeholder="Note title..."/>
+      </div>
+      <div class="mb-2">
+        <textarea id="noteBody" class="form-control" rows="3"
+          placeholder="Write your note here..."></textarea>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <!-- Color picker dots -->
+        <div id="colorPicker" class="d-flex gap-2"></div>
+        <button class="btn btn-warning fw-bold ms-auto" onclick="addNote()">+ Add Note</button>
+      </div>
+    </div>
   </div>
 
-  <!-- PRODUCT GRID: Bootstrap row -->
-  <div class="row g-4" id="productGrid"></div>
+  <!-- SEARCH: Bootstrap input-group -->
+  <div class="input-group mb-3">
+    <span class="input-group-text">🔍</span>
+    <input type="text" id="searchInput" class="form-control"
+      placeholder="Search notes..." oninput="renderNotes()"/>
+  </div>
+
+  <!-- NOTES GRID -->
+  <div class="notes-grid" id="notesGrid"></div>
 
 </div>
 
 <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  const products = [
-    { name:"Wireless Headphones", icon:"🎧", category:"Electronics", price:1999 },
-    { name:"Running Shoes",       icon:"👟", category:"Footwear",    price:2499 },
-    { name:"Smart Watch",         icon:"⌚", category:"Electronics", price:5999 },
-    { name:"Backpack",            icon:"🎒", category:"Fashion",     price:1299 },
-    { name:"Laptop Stand",        icon:"💻", category:"Electronics", price:799  },
-    { name:"Water Bottle",        icon:"🧴", category:"Fitness",     price:499  },
-    { name:"Yoga Mat",            icon:"🧘", category:"Fitness",     price:999  },
-    { name:"Sunglasses",          icon:"🕶️", category:"Fashion",    price:899  },
-    { name:"Sneakers",            icon:"👞", category:"Footwear",    price:1799 },
-    { name:"Dumbbell Set",        icon:"🏋️", category:"Fitness",    price:3499 },
-    { name:"Keyboard",            icon:"⌨️", category:"Electronics", price:2999 },
-    { name:"Handbag",             icon:"👜", category:"Fashion",     price:1599 },
-  ];
+  const colors = ["#fff9c4","#c8e6c9","#bbdefb","#f8bbd0","#ffe0b2","#e1bee7"];
+  let selectedColor = colors[0];
+  // Load from localStorage: JSON.parse converts stored string back to JS array
+  let notes = JSON.parse(localStorage.getItem("notesApp") || "[]");
 
-  let activeFilter = "All";
-
-  // ===== BUILD FILTER BUTTONS from unique categories =====
-  function buildFilters() {
-    const bar = document.getElementById("filterBar");
-    const categories = [...new Set(products.map(p => p.category))]; // unique values
-    categories.forEach(cat => {
-      const btn = document.createElement("button");
-      // Bootstrap btn-outline-dark for inactive, btn-dark for active
-      btn.className = "btn btn-outline-dark";
-      btn.textContent = cat;
-      btn.onclick = () => filterProducts(cat, btn);
-      bar.appendChild(btn);
+  // ===== BUILD COLOR PICKER =====
+  function buildColorPicker() {
+    const picker = document.getElementById("colorPicker");
+    colors.forEach((c, i) => {
+      const dot = document.createElement("div");
+      dot.className = "color-dot" + (i === 0 ? " selected" : "");
+      dot.style.background = c;
+      dot.onclick = () => {
+        selectedColor = c;
+        document.querySelectorAll(".color-dot").forEach(d => d.classList.remove("selected"));
+        dot.classList.add("selected");
+      };
+      picker.appendChild(dot);
     });
   }
 
-  // ===== RENDER PRODUCTS =====
-  function renderProducts() {
-    const grid = document.getElementById("productGrid");
-    grid.innerHTML = "";
-    const filtered = activeFilter === "All"
-      ? products : products.filter(p => p.category === activeFilter);
+  // ===== ADD NOTE =====
+  function addNote() {
+    const title = document.getElementById("noteTitle").value.trim();
+    const body  = document.getElementById("noteBody").value.trim();
+    if (!title && !body) { alert("Note is empty!"); return; }
+    notes.unshift({
+      id: Date.now(), title: title || "Untitled", body,
+      color: selectedColor,
+      date: new Date().toLocaleDateString("en-IN", {day:"2-digit",month:"short",year:"numeric"})
+    });
+    // Save to localStorage: JSON.stringify converts JS array to string
+    localStorage.setItem("notesApp", JSON.stringify(notes));
+    renderNotes();
+    document.getElementById("noteTitle").value = "";
+    document.getElementById("noteBody").value  = "";
+  }
 
-    document.getElementById("countDisplay").textContent =
-      `${filtered.length} product${filtered.length !== 1 ? 's' : ''}`;
+  // ===== DELETE NOTE =====
+  function deleteNote(id) {
+    notes = notes.filter(n => n.id !== id);
+    localStorage.setItem("notesApp", JSON.stringify(notes));
+    renderNotes();
+  }
+
+  // ===== RENDER NOTES =====
+  function renderNotes() {
+    const query = document.getElementById("searchInput").value.toLowerCase();
+    const grid  = document.getElementById("notesGrid");
+    const filtered = notes.filter(n =>
+      n.title.toLowerCase().includes(query) || n.body.toLowerCase().includes(query)
+    );
+
+    document.getElementById("countBar").textContent = `${filtered.length} note${filtered.length!==1?'s':''}`;
 
     if (filtered.length === 0) {
-      grid.innerHTML = `<div class="col"><div class="alert alert-warning text-center">No products in this category.</div></div>`;
+      grid.innerHTML = `<div class="alert alert-warning text-center">📭 No notes found.</div>`;
       return;
     }
 
-    filtered.forEach(p => {
-      const col = document.createElement("div");
-      col.className = "col-md-3 col-sm-6";
-      col.innerHTML = `
-        <div class="card product-card text-center shadow-sm h-100">
-          <div class="card-body">
-            <div class="product-icon mb-2">${p.icon}</div>
-            <h6 class="card-title fw-bold">${p.name}</h6>
-            <!-- Bootstrap badge for category tag -->
-            <span class="badge bg-info text-dark mb-2">${p.category}</span>
-            <div class="price mb-3">₹${p.price.toLocaleString()}</div>
-            <button class="btn btn-dark btn-sm w-100">+ Add to Cart</button>
-          </div>
+    grid.innerHTML = "";
+    filtered.forEach(note => {
+      const wrap = document.createElement("div");
+      wrap.className = "note-card-wrap";
+      wrap.innerHTML = `
+        <div class="card note-card p-3 position-relative" style="background:${note.color}">
+          <!-- Bootstrap btn-close for delete button -->
+          <button class="btn btn-sm btn-link text-danger delete-note position-absolute top-0 end-0 p-1"
+                  onclick="deleteNote(${note.id})">✕</button>
+          <h6 class="fw-bold mb-1">${note.title}</h6>
+          <p class="mb-2 small">${note.body}</p>
+          <small class="text-muted">📅 ${note.date}</small>
         </div>
       `;
-      grid.appendChild(col);
+      grid.appendChild(wrap);
     });
   }
 
-  // ===== FILTER FUNCTION =====
-  function filterProducts(category, btn) {
-    activeFilter = category;
-    // Remove active from all, add to clicked
-    document.querySelectorAll("#filterBar .btn").forEach(b => {
-      b.className = "btn btn-outline-dark";
-    });
-    btn.className = "btn btn-dark active";
-    renderProducts();
-  }
-
-  buildFilters();
-  renderProducts();
+  buildColorPicker();
+  renderNotes();
 </script>
 </body>
 </html>
