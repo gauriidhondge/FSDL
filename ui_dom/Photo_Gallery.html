@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Photo Gallery</title>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <style>
+    body { background: #111; color: white; }
+    /* Gallery image placeholder using emoji */
+    .gallery-img {
+      height: 200px; display: flex; align-items: center;
+      justify-content: center; font-size: 65px;
+      overflow: hidden;
+      /* ZOOM effect: scale image on hover */
+      transition: transform 0.4s ease;
+    }
+    .gallery-item:hover .gallery-img { transform: scale(1.1); }
+
+    /* OVERLAY: hidden by default, fades in on hover */
+    .gallery-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.65);
+      opacity: 0;
+      transition: opacity 0.4s;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 10px;
+    }
+    .gallery-item:hover .gallery-overlay { opacity: 1; }
+
+    .gallery-item { position: relative; overflow: hidden;
+                    border-radius: 10px; cursor: pointer; }
+    /* Bootstrap modal customized for lightbox */
+    .modal-content { background: #111; color: white; border: none; }
+  </style>
+</head>
+<body>
+
+<div class="container py-4">
+  <h1 class="text-center mb-2">📸 Photo Gallery</h1>
+  <p class="text-center text-muted mb-4">Hover over images to see effects · Click to enlarge</p>
+
+  <!-- Bootstrap row grid for gallery -->
+  <div class="row g-3" id="gallery"></div>
+</div>
+
+<!-- Bootstrap MODAL for lightbox (full-screen image view) -->
+<div class="modal fade" id="lightboxModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center p-4">
+      <!-- Bootstrap modal close button -->
+      <button type="button" class="btn-close btn-close-white ms-auto mb-3"
+              data-bs-dismiss="modal"></button>
+      <div id="lb-emoji" style="font-size:80px" class="mb-3"></div>
+      <h3 id="lb-title"></h3>
+      <p id="lb-desc" class="text-muted"></p>
+    </div>
+  </div>
+</div>
+
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const photos = [
+    { emoji:"🏔️", title:"Mountain Peak",   desc:"Snow-capped peaks at dawn",        color:"#1a1a2e", cat:"Nature"   },
+    { emoji:"🌊", title:"Ocean Waves",      desc:"Serene ocean view at sunset",      color:"#0d3b6e", cat:"Nature"   },
+    { emoji:"🌆", title:"City Skyline",     desc:"Downtown at golden hour",          color:"#2d1b00", cat:"Urban"    },
+    { emoji:"🌸", title:"Cherry Blossom",   desc:"Spring petals in full bloom",      color:"#4a1040", cat:"Flora"    },
+    { emoji:"🦁", title:"Lion Portrait",    desc:"King of the savanna up close",     color:"#3b2000", cat:"Wildlife" },
+    { emoji:"🏛️", title:"Ancient Temple",  desc:"Architecture of the ages",         color:"#1c3a1c", cat:"Heritage" },
+    { emoji:"🌌", title:"Milky Way",        desc:"Galaxy in long exposure",          color:"#0a0a1e", cat:"Space"    },
+    { emoji:"🍂", title:"Autumn Forest",    desc:"Golden leaves of fall season",     color:"#3b1f00", cat:"Seasons"  },
+    { emoji:"🐬", title:"Dolphin Play",     desc:"Dolphins leaping in the open sea", color:"#003d5b", cat:"Wildlife" },
+  ];
+
+  function renderGallery() {
+    const gallery = document.getElementById("gallery");
+    photos.forEach((p, i) => {
+      // Bootstrap col-md-4: 3 columns on desktop
+      const col = document.createElement("div");
+      col.className = "col-md-4 col-sm-6";
+      col.innerHTML = `
+        <div class="gallery-item" onclick="openModal(${i})">
+          <div class="gallery-img" style="background:${p.color}">${p.emoji}</div>
+          <!-- Overlay appears on hover with Bootstrap badge and text -->
+          <div class="gallery-overlay text-white text-center">
+            <span class="badge bg-primary mb-2">${p.cat}</span>
+            <h6 class="fw-bold">${p.title}</h6>
+            <small>${p.desc}</small>
+          </div>
+        </div>
+      `;
+      gallery.appendChild(col);
+    });
+  }
+
+  // ===== OPEN BOOTSTRAP MODAL (LIGHTBOX) =====
+  function openModal(i) {
+    document.getElementById("lb-emoji").textContent = photos[i].emoji;
+    document.getElementById("lb-title").textContent = photos[i].title;
+    document.getElementById("lb-desc").textContent  = photos[i].desc;
+    // Bootstrap Modal API: show() opens the modal programmatically
+    new bootstrap.Modal(document.getElementById("lightboxModal")).show();
+  }
+
+  renderGallery();
+</script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FAQ Accordion</title>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <style>
+    body { background: #f0f4f8; }
+    /* Customize Bootstrap accordion colors */
+    .accordion-button:not(.collapsed) {
+      background-color: #e7f1ff;
+      color: #0d6efd;
+      font-weight: 700;
+    }
+    .accordion-button { font-weight: 600; font-size: 15px; }
+  </style>
+</head>
+<body>
+
+<div class="container py-5">
+  <h1 class="text-center mb-2">❓ Frequently Asked Questions</h1>
+  <p class="text-center text-muted mb-4">Click any question to expand or collapse the answer</p>
+
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Bootstrap Accordion component
+           Each accordion-item has a header (button) and a collapse panel (body)
+           data-bs-parent="#faqAccordion" ensures only one item open at a time -->
+      <div class="accordion shadow" id="faqAccordion">
+        <!-- Items inserted by JavaScript -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // ===== FAQ DATA =====
+  const faqs = [
+    { q:"What is HTML?",
+      a:"HTML (HyperText Markup Language) is the standard language for creating web pages. It provides the basic structure using elements called tags such as &lt;p&gt;, &lt;h1&gt;, &lt;div&gt; etc." },
+    { q:"What is the difference between CSS and JavaScript?",
+      a:"CSS (Cascading Style Sheets) is used to style HTML content — colors, fonts, and layouts. JavaScript is a programming language used to add interactivity and dynamic behavior to web pages." },
+    { q:"What is DOM in JavaScript?",
+      a:"DOM stands for Document Object Model. It is a tree-like representation of the HTML document. JavaScript uses the DOM to access, modify, or delete HTML elements and their attributes dynamically." },
+    { q:"What is localStorage?",
+      a:"localStorage is a Web API that allows you to store key-value data in the user's browser. It has no expiration date and persists even after the browser is closed. Can store up to 5-10 MB." },
+    { q:"What is responsive web design?",
+      a:"Responsive web design makes web pages render well on different devices and screen sizes. It uses flexible grids, fluid images, and CSS media queries to adjust the layout automatically." },
+    { q:"What is the difference between div and span?",
+      a:"div is a block-level element that takes full width and starts on a new line. span is an inline element used to style part of text without breaking the document flow." },
+    { q:"What is JSON?",
+      a:"JSON (JavaScript Object Notation) is a lightweight data format using key-value pairs and arrays. It is easy to read and write, and widely used in APIs and web development for data exchange." },
+  ];
+
+  // ===== BUILD BOOTSTRAP ACCORDION =====
+  // Dynamically generates accordion items from the faqs array
+  function buildAccordion() {
+    const container = document.getElementById("faqAccordion");
+    faqs.forEach((faq, i) => {
+      const itemId   = `faqItem${i}`;
+      const collapseId = `collapse${i}`;
+
+      const item = document.createElement("div");
+      item.className = "accordion-item";
+
+      item.innerHTML = `
+        <!-- ACCORDION HEADER: Bootstrap button with data-bs-toggle="collapse" -->
+        <h2 class="accordion-header" id="${itemId}">
+          <button class="accordion-button ${i !== 0 ? 'collapsed' : ''}" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#${collapseId}"
+                  aria-expanded="${i === 0}" aria-controls="${collapseId}">
+            Q${i + 1}. ${faq.q}
+          </button>
+        </h2>
+        <!-- ACCORDION BODY: Bootstrap collapse panel
+             data-bs-parent links to the parent accordion so only one opens at a time -->
+        <div id="${collapseId}" class="accordion-collapse collapse ${i === 0 ? 'show' : ''}"
+             data-bs-parent="#faqAccordion">
+          <div class="accordion-body text-muted">
+            ${faq.a}
+          </div>
+        </div>
+      `;
+      container.appendChild(item);
+    });
+  }
+
+  buildAccordion();
+</script>
+</body>
+</html>

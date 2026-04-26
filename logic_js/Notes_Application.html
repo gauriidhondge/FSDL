@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product Filtering System</title>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <style>
+    body { background: #f4f6f9; }
+    .product-icon { font-size: 48px; }
+    .product-card { transition: transform 0.3s; }
+    .product-card:hover { transform: translateY(-5px); }
+    .price { color: #dc3545; font-size: 18px; font-weight: 800; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark bg-dark mb-4">
+  <div class="container">
+    <span class="navbar-brand fw-bold">🔍 Product Filtering System</span>
+    <span class="badge bg-light text-dark fs-6" id="countDisplay">0 products</span>
+  </div>
+</nav>
+
+<div class="container pb-4">
+
+  <!-- FILTER BUTTONS: Bootstrap btn-group -->
+  <div class="d-flex flex-wrap gap-2 justify-content-center mb-4" id="filterBar">
+    <button class="btn btn-dark active" onclick="filterProducts('All', this)">All</button>
+  </div>
+
+  <!-- PRODUCT GRID: Bootstrap row -->
+  <div class="row g-4" id="productGrid"></div>
+
+</div>
+
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const products = [
+    { name:"Wireless Headphones", icon:"🎧", category:"Electronics", price:1999 },
+    { name:"Running Shoes",       icon:"👟", category:"Footwear",    price:2499 },
+    { name:"Smart Watch",         icon:"⌚", category:"Electronics", price:5999 },
+    { name:"Backpack",            icon:"🎒", category:"Fashion",     price:1299 },
+    { name:"Laptop Stand",        icon:"💻", category:"Electronics", price:799  },
+    { name:"Water Bottle",        icon:"🧴", category:"Fitness",     price:499  },
+    { name:"Yoga Mat",            icon:"🧘", category:"Fitness",     price:999  },
+    { name:"Sunglasses",          icon:"🕶️", category:"Fashion",    price:899  },
+    { name:"Sneakers",            icon:"👞", category:"Footwear",    price:1799 },
+    { name:"Dumbbell Set",        icon:"🏋️", category:"Fitness",    price:3499 },
+    { name:"Keyboard",            icon:"⌨️", category:"Electronics", price:2999 },
+    { name:"Handbag",             icon:"👜", category:"Fashion",     price:1599 },
+  ];
+
+  let activeFilter = "All";
+
+  // ===== BUILD FILTER BUTTONS from unique categories =====
+  function buildFilters() {
+    const bar = document.getElementById("filterBar");
+    const categories = [...new Set(products.map(p => p.category))]; // unique values
+    categories.forEach(cat => {
+      const btn = document.createElement("button");
+      // Bootstrap btn-outline-dark for inactive, btn-dark for active
+      btn.className = "btn btn-outline-dark";
+      btn.textContent = cat;
+      btn.onclick = () => filterProducts(cat, btn);
+      bar.appendChild(btn);
+    });
+  }
+
+  // ===== RENDER PRODUCTS =====
+  function renderProducts() {
+    const grid = document.getElementById("productGrid");
+    grid.innerHTML = "";
+    const filtered = activeFilter === "All"
+      ? products : products.filter(p => p.category === activeFilter);
+
+    document.getElementById("countDisplay").textContent =
+      `${filtered.length} product${filtered.length !== 1 ? 's' : ''}`;
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `<div class="col"><div class="alert alert-warning text-center">No products in this category.</div></div>`;
+      return;
+    }
+
+    filtered.forEach(p => {
+      const col = document.createElement("div");
+      col.className = "col-md-3 col-sm-6";
+      col.innerHTML = `
+        <div class="card product-card text-center shadow-sm h-100">
+          <div class="card-body">
+            <div class="product-icon mb-2">${p.icon}</div>
+            <h6 class="card-title fw-bold">${p.name}</h6>
+            <!-- Bootstrap badge for category tag -->
+            <span class="badge bg-info text-dark mb-2">${p.category}</span>
+            <div class="price mb-3">₹${p.price.toLocaleString()}</div>
+            <button class="btn btn-dark btn-sm w-100">+ Add to Cart</button>
+          </div>
+        </div>
+      `;
+      grid.appendChild(col);
+    });
+  }
+
+  // ===== FILTER FUNCTION =====
+  function filterProducts(category, btn) {
+    activeFilter = category;
+    // Remove active from all, add to clicked
+    document.querySelectorAll("#filterBar .btn").forEach(b => {
+      b.className = "btn btn-outline-dark";
+    });
+    btn.className = "btn btn-dark active";
+    renderProducts();
+  }
+
+  buildFilters();
+  renderProducts();
+</script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pricing Toggle Interface</title>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <style>
+    body { background: #f7f8fc; }
+    .price-val { font-size: 42px; font-weight: 800; color: #0d6efd; }
+    /* Bootstrap card used for pricing plans */
+    .plan-card { border-radius: 16px; transition: transform 0.3s; }
+    .plan-card:hover { transform: translateY(-8px); }
+    .plan-card.popular { border: 2px solid #0d6efd !important; }
+    .feature-list li::before { content: "✅ "; }
+    .feature-list { list-style: none; padding-left: 0; }
+    /* Bootstrap form-check-input used as toggle switch */
+    .form-check-input { width: 3em; height: 1.5em; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+<div class="container py-5">
+  <h1 class="text-center mb-2">💳 Choose Your Plan</h1>
+  <p class="text-center text-muted mb-4">Simple, transparent pricing for everyone</p>
+
+  <!-- TOGGLE SWITCH: Bootstrap form-check with role="switch" -->
+  <div class="d-flex justify-content-center align-items-center gap-3 mb-5">
+    <span class="fw-bold fs-5" id="monthlyLabel">Monthly</span>
+    <div class="form-check form-switch mb-0">
+      <!-- Bootstrap switch toggle -->
+      <input class="form-check-input" type="checkbox" id="billingToggle"
+             onchange="updatePrices()" style="width:3em; height:1.5em;"/>
+    </div>
+    <span class="fw-bold fs-5" id="yearlyLabel">Yearly</span>
+    <!-- Bootstrap badge for discount label -->
+    <span class="badge bg-success">Save 20%</span>
+  </div>
+
+  <!-- PRICING CARDS: Bootstrap card grid -->
+  <div class="row justify-content-center g-4">
+
+    <!-- STARTER PLAN -->
+    <div class="col-md-3">
+      <div class="card plan-card shadow text-center p-4 h-100">
+        <h4 class="fw-bold">Starter</h4>
+        <!-- data-monthly / data-yearly used by JS to swap price -->
+        <div class="price-val" data-monthly="₹499" data-yearly="₹399">₹499</div>
+        <small class="text-muted">/month</small>
+        <hr/>
+        <ul class="feature-list text-start mt-2">
+          <li>5 Projects</li>
+          <li>10 GB Storage</li>
+          <li>Email Support</li>
+        </ul>
+        <button class="btn btn-outline-primary mt-auto w-100">Get Started</button>
+      </div>
+    </div>
+
+    <!-- PRO PLAN (POPULAR) -->
+    <div class="col-md-3">
+      <div class="card plan-card popular shadow text-center p-4 h-100">
+        <!-- Bootstrap badge for "Most Popular" label -->
+        <span class="badge bg-primary mb-2">⭐ Most Popular</span>
+        <h4 class="fw-bold">Pro</h4>
+        <div class="price-val" data-monthly="₹999" data-yearly="₹799">₹999</div>
+        <small class="text-muted">/month</small>
+        <hr/>
+        <ul class="feature-list text-start mt-2">
+          <li>25 Projects</li>
+          <li>50 GB Storage</li>
+          <li>Priority Support</li>
+          <li>Analytics Dashboard</li>
+        </ul>
+        <button class="btn btn-primary mt-auto w-100">Get Started</button>
+      </div>
+    </div>
+
+    <!-- ENTERPRISE PLAN -->
+    <div class="col-md-3">
+      <div class="card plan-card shadow text-center p-4 h-100">
+        <h4 class="fw-bold">Enterprise</h4>
+        <div class="price-val" data-monthly="₹2499" data-yearly="₹1999">₹2499</div>
+        <small class="text-muted">/month</small>
+        <hr/>
+        <ul class="feature-list text-start mt-2">
+          <li>Unlimited Projects</li>
+          <li>500 GB Storage</li>
+          <li>24/7 Dedicated Support</li>
+          <li>Custom Integrations</li>
+        </ul>
+        <button class="btn btn-outline-primary mt-auto w-100">Contact Sales</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // ===== UPDATE PRICES =====
+  // Called when the Bootstrap switch toggle changes
+  function updatePrices() {
+    const isYearly = document.getElementById("billingToggle").checked;
+
+    // Toggle bold/normal on labels
+    document.getElementById("monthlyLabel").className = isYearly ? "fw-normal fs-5" : "fw-bold fs-5";
+    document.getElementById("yearlyLabel").className  = isYearly ? "fw-bold fs-5"   : "fw-normal fs-5";
+
+    // Update each price element using data attributes
+    document.querySelectorAll(".price-val").forEach(el => {
+      el.textContent = isYearly ? el.dataset.yearly : el.dataset.monthly;
+    });
+  }
+</script>
+</body>
+</html>

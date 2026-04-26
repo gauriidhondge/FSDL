@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Real-Time Profile Previewer</title>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <style>
+    body { background: #ecf0f1; }
+    /* Avatar circle showing initials */
+    .avatar {
+      width: 90px; height: 90px; border-radius: 50%;
+      background: linear-gradient(135deg, #0d6efd, #6f42c1);
+      color: white; font-size: 32px; font-weight: bold;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+    }
+    /* Bootstrap badge used for skill tags */
+    .skill-tag { margin: 3px; }
+  </style>
+</head>
+<body>
+
+<div class="container py-4">
+  <h1 class="text-center mb-4">👤 Real-Time Profile Previewer</h1>
+
+  <!-- Bootstrap row: 2 columns side by side -->
+  <div class="row g-4">
+
+    <!-- LEFT: Input Form -->
+    <div class="col-md-6">
+      <div class="card shadow p-4">
+        <h5 class="mb-3">✏️ Edit Profile</h5>
+
+        <!-- Bootstrap form-label + form-control for each field -->
+        <div class="mb-3">
+          <label class="form-label">Full Name</label>
+          <input type="text" id="inputName" class="form-control"
+            placeholder="e.g. Gauri Patil" oninput="updatePreview()"/>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Job Role</label>
+          <input type="text" id="inputRole" class="form-control"
+            placeholder="e.g. Web Developer" oninput="updatePreview()"/>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" id="inputEmail" class="form-control"
+            placeholder="e.g. gauri@email.com" oninput="updatePreview()"/>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Phone</label>
+          <input type="tel" id="inputPhone" class="form-control"
+            placeholder="e.g. +91 9876543210" oninput="updatePreview()"/>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Bio</label>
+          <textarea id="inputBio" class="form-control" rows="3"
+            placeholder="Write a short bio..." oninput="updatePreview()"></textarea>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Skills (comma separated)</label>
+          <input type="text" id="inputSkills" class="form-control"
+            placeholder="e.g. HTML, CSS, JavaScript" oninput="updatePreview()"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Live Preview Card -->
+    <div class="col-md-6">
+      <div class="card shadow p-4 text-center h-100">
+        <h5 class="mb-3">👁️ Live Preview</h5>
+        <!-- Avatar: shows initials dynamically -->
+        <div class="avatar" id="preview-avatar">GP</div>
+        <h4 class="mb-1" id="preview-name">Gauri Patil</h4>
+        <p class="text-muted mb-2" id="preview-role">Web Developer</p>
+        <p class="mb-1" id="preview-email">📧 gauri@email.com</p>
+        <p class="mb-3" id="preview-phone">📞 +91 9876543210</p>
+        <!-- Bootstrap divider -->
+        <hr/>
+        <p class="text-muted fst-italic" id="preview-bio">Passionate about building web apps.</p>
+        <!-- Skills shown as Bootstrap badges -->
+        <div class="mt-3" id="preview-skills">
+          <span class="badge bg-primary skill-tag">HTML</span>
+          <span class="badge bg-primary skill-tag">CSS</span>
+          <span class="badge bg-primary skill-tag">JavaScript</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // ===== UPDATE PREVIEW IN REAL TIME =====
+  // oninput fires on every keystroke — updates profile card instantly
+  function updatePreview() {
+    const name   = document.getElementById("inputName").value   || "Your Name";
+    const role   = document.getElementById("inputRole").value   || "Your Role";
+    const email  = document.getElementById("inputEmail").value  || "email@example.com";
+    const phone  = document.getElementById("inputPhone").value  || "+91 0000000000";
+    const bio    = document.getElementById("inputBio").value    || "Your bio goes here...";
+    const skills = document.getElementById("inputSkills").value;
+
+    document.getElementById("preview-name").textContent  = name;
+    document.getElementById("preview-role").textContent  = role;
+    document.getElementById("preview-email").textContent = "📧 " + email;
+    document.getElementById("preview-phone").textContent = "📞 " + phone;
+    document.getElementById("preview-bio").textContent   = bio;
+
+    // Generate initials from name: "Gauri Patil" → "GP"
+    const initials = name.split(" ").map(w => w[0]).join("").substring(0, 2).toUpperCase();
+    document.getElementById("preview-avatar").textContent = initials || "?";
+
+    // Render skill badges
+    const skillContainer = document.getElementById("preview-skills");
+    skillContainer.innerHTML = "";
+    if (skills.trim()) {
+      skills.split(",").forEach(s => {
+        if (s.trim()) {
+          const badge = document.createElement("span");
+          // Bootstrap badge classes
+          badge.className = "badge bg-primary skill-tag";
+          badge.textContent = s.trim();
+          skillContainer.appendChild(badge);
+        }
+      });
+    }
+  }
+</script>
+</body>
+</html>

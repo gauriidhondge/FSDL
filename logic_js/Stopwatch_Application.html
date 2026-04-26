@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stopwatch Application</title>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <style>
+    body { background: #1a1a2e; color: white; }
+    .stopwatch-card { background: #16213e; border: none; border-radius: 20px; }
+    .time-display { font-size: 64px; font-weight: 300; font-family: monospace; letter-spacing: 4px; }
+    .ms-display   { font-size: 30px; color: #0d6efd; font-family: monospace; }
+    /* Bootstrap list-group for lap times */
+    .list-group-item { background: #0f3460; color: #ccc; border-color: #1a3a5c; font-family: monospace; }
+  </style>
+</head>
+<body>
+
+<div class="container py-5 d-flex justify-content-center">
+  <div class="card stopwatch-card shadow-lg p-4 text-center" style="width:420px">
+    <p class="text-uppercase text-secondary letter-spacing mb-3" style="letter-spacing:4px">⏱ Stopwatch</p>
+
+    <!-- TIME DISPLAY -->
+    <div class="time-display text-white" id="timeDisplay">00:00</div>
+    <div class="ms-display mb-4" id="msDisplay">.00</div>
+
+    <!-- CONTROL BUTTONS: Bootstrap btn-group -->
+    <div class="d-flex gap-3 justify-content-center mb-4">
+      <button class="btn btn-success px-4 py-2 fw-bold" id="startBtn" onclick="startStop()">▶ Start</button>
+      <button class="btn btn-secondary px-4 py-2 fw-bold" onclick="resetTimer()">↺ Reset</button>
+      <button class="btn btn-primary px-4 py-2 fw-bold" onclick="recordLap()">⚑ Lap</button>
+    </div>
+
+    <!-- LAP TIMES: Bootstrap list-group -->
+    <div class="text-start">
+      <p class="text-uppercase text-secondary small mb-2" style="letter-spacing:2px">Lap Times</p>
+      <!-- Bootstrap list-group-flush removes outer borders -->
+      <ul class="list-group list-group-flush" id="lapList" style="max-height:200px;overflow-y:auto">
+        <li class="list-group-item text-center text-muted">No laps recorded yet.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  let isRunning = false, elapsedTime = 0, startTime = 0, intervalId = null, lapCount = 0;
+
+  function startStop() {
+    const btn = document.getElementById("startBtn");
+    if (!isRunning) {
+      startTime = Date.now() - elapsedTime;
+      // setInterval: fires every 10ms to update millisecond display
+      intervalId = setInterval(updateDisplay, 10);
+      isRunning = true;
+      btn.textContent = "⏸ Pause";
+      btn.className = "btn btn-warning px-4 py-2 fw-bold";
+    } else {
+      clearInterval(intervalId);
+      elapsedTime = Date.now() - startTime;
+      isRunning = false;
+      btn.textContent = "▶ Resume";
+      btn.className = "btn btn-success px-4 py-2 fw-bold";
+    }
+  }
+
+  function resetTimer() {
+    clearInterval(intervalId);
+    isRunning = false; elapsedTime = 0; lapCount = 0;
+    document.getElementById("timeDisplay").textContent = "00:00";
+    document.getElementById("msDisplay").textContent   = ".00";
+    const btn = document.getElementById("startBtn");
+    btn.textContent = "▶ Start"; btn.className = "btn btn-success px-4 py-2 fw-bold";
+    document.getElementById("lapList").innerHTML =
+      '<li class="list-group-item text-center text-muted">No laps recorded yet.</li>';
+  }
+
+  function recordLap() {
+    if (!isRunning && elapsedTime === 0) return;
+    lapCount++;
+    const lapTime = formatTime(isRunning ? Date.now() - startTime : elapsedTime);
+    const lapList = document.getElementById("lapList");
+    if (lapCount === 1) lapList.innerHTML = "";
+    const li = document.createElement("li");
+    li.className = "list-group-item d-flex justify-content-between";
+    li.innerHTML = `<span class="text-primary fw-bold">Lap ${lapCount}</span><span>${lapTime}</span>`;
+    lapList.insertBefore(li, lapList.firstChild);
+  }
+
+  function updateDisplay() {
+    elapsedTime = Date.now() - startTime;
+    document.getElementById("timeDisplay").textContent = formatTime(elapsedTime);
+    document.getElementById("msDisplay").textContent =
+      "." + String(Math.floor((elapsedTime % 1000) / 10)).padStart(2, "0");
+  }
+
+  function formatTime(ms) {
+    const s = Math.floor(ms / 1000);
+    return String(Math.floor(s/60)).padStart(2,"0") + ":" + String(s%60).padStart(2,"0");
+  }
+</script>
+</body>
+</html>

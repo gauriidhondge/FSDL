@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Digital Glossary - HTML Tags</title>
+  <!-- Bootstrap CSS: provides table, badge, form-control, alert styles -->
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <style>
+    body { background: #f0f4f8; }
+    code { background: #fff3cd; padding: 2px 6px; border-radius: 4px; color: #d63384; font-size: 13px; }
+    tbody tr:hover { background: #e8f4fd; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+<div class="container py-4">
+  <h1 class="text-center mb-1">📖 HTML Tags - Digital Glossary</h1>
+  <p class="text-center text-muted mb-4">A reference table of common HTML formatting tags</p>
+
+  <!-- SEARCH BAR: Bootstrap form-control styles the input beautifully -->
+  <div class="row justify-content-center mb-3">
+    <div class="col-md-6">
+      <input type="text" id="searchInput" class="form-control form-control-lg"
+        placeholder="🔍 Search a tag, category or description..." onkeyup="filterTable()"/>
+    </div>
+  </div>
+
+  <!-- RESULT COUNT using Bootstrap badge -->
+  <div class="text-center mb-2">
+    <span class="badge bg-primary fs-6" id="countBadge">0 tags</span>
+  </div>
+
+  <!-- TABLE: Bootstrap table-striped, table-bordered, table-hover -->
+  <div class="table-responsive">
+    <table class="table table-striped table-bordered table-hover align-middle shadow-sm">
+      <thead class="table-dark">
+        <tr>
+          <th style="width:50px">#</th>
+          <th>Tag</th>
+          <th>Category</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <!-- Rows inserted by JavaScript -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Bootstrap alert shown when no search results found -->
+  <div id="noResult" class="alert alert-warning text-center d-none" role="alert">
+    ❌ No matching tags found. Try a different keyword.
+  </div>
+</div>
+
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // ===== DATA: HTML tags array =====
+  const tags = [
+    { tag:"<html>",     category:"Structure",  desc:"Root element of an HTML page" },
+    { tag:"<head>",     category:"Structure",  desc:"Contains metadata and links" },
+    { tag:"<body>",     category:"Structure",  desc:"Contains visible page content" },
+    { tag:"<h1>-<h6>", category:"Text",       desc:"Heading tags from largest to smallest" },
+    { tag:"<p>",        category:"Text",       desc:"Defines a paragraph" },
+    { tag:"<a>",        category:"Link",       desc:"Creates hyperlinks using href attribute" },
+    { tag:"<img>",      category:"Media",      desc:"Embeds an image using src attribute" },
+    { tag:"<ul>",       category:"List",       desc:"Unordered (bulleted) list" },
+    { tag:"<ol>",       category:"List",       desc:"Ordered (numbered) list" },
+    { tag:"<li>",       category:"List",       desc:"List item inside ul or ol" },
+    { tag:"<table>",    category:"Table",      desc:"Creates a table structure" },
+    { tag:"<tr>",       category:"Table",      desc:"Table row" },
+    { tag:"<td>",       category:"Table",      desc:"Table data cell" },
+    { tag:"<th>",       category:"Table",      desc:"Table header cell" },
+    { tag:"<form>",     category:"Form",       desc:"Creates an input form" },
+    { tag:"<input>",    category:"Form",       desc:"Takes user input; type defines kind" },
+    { tag:"<button>",   category:"Form",       desc:"Clickable button element" },
+    { tag:"<div>",      category:"Container",  desc:"Block-level container element" },
+    { tag:"<span>",     category:"Container",  desc:"Inline container element" },
+    { tag:"<style>",    category:"Meta",       desc:"Contains CSS styles inside HTML" },
+    { tag:"<script>",   category:"Meta",       desc:"Embeds or links JavaScript" },
+    { tag:"<link>",     category:"Meta",       desc:"Links external resources like CSS" },
+    { tag:"<meta>",     category:"Meta",       desc:"Defines metadata like charset, viewport" },
+    { tag:"<header>",   category:"Semantic",   desc:"Top section of a page or section" },
+    { tag:"<footer>",   category:"Semantic",   desc:"Bottom section of a page" },
+    { tag:"<nav>",      category:"Semantic",   desc:"Defines navigation links" },
+    { tag:"<section>",  category:"Semantic",   desc:"Defines a thematic section of content" },
+    { tag:"<article>",  category:"Semantic",   desc:"Self-contained content like blog post" },
+    { tag:"<strong>",   category:"Text",       desc:"Bold text with semantic importance" },
+    { tag:"<em>",       category:"Text",       desc:"Italic text with emphasis" },
+    { tag:"<br>",       category:"Text",       desc:"Line break (self-closing tag)" },
+    { tag:"<hr>",       category:"Text",       desc:"Horizontal rule / divider line" },
+  ];
+
+  // ===== RENDER TABLE =====
+  function renderTable(data) {
+    const tbody = document.getElementById("tableBody");
+    tbody.innerHTML = "";
+    data.forEach((item, i) => {
+      const row = document.createElement("tr");
+      const td1 = document.createElement("td"); td1.textContent = i + 1;
+      const td2 = document.createElement("td");
+      // Use textContent so <html> shows as text, not as a real HTML tag
+      const code = document.createElement("code"); code.textContent = item.tag;
+      td2.appendChild(code);
+      const td3 = document.createElement("td"); td3.textContent = item.category;
+      const td4 = document.createElement("td"); td4.textContent = item.desc;
+      row.appendChild(td1); row.appendChild(td2); row.appendChild(td3); row.appendChild(td4);
+      tbody.appendChild(row);
+    });
+    document.getElementById("countBadge").textContent = data.length + " tags";
+    document.getElementById("noResult").classList.toggle("d-none", data.length !== 0);
+  }
+
+  // ===== FILTER: runs on every keyup =====
+  function filterTable() {
+    const q = document.getElementById("searchInput").value.toLowerCase();
+    renderTable(tags.filter(t =>
+      t.tag.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q) || t.category.toLowerCase().includes(q)
+    ));
+  }
+
+  renderTable(tags);
+</script>
+</body>
+</html>

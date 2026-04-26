@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Responsive Navigation Bar</title>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <style>
+    body { background: #f0f4f8; }
+    /* Custom active link highlight */
+    .navbar-nav .nav-link.active { color: #fff !important; background: #0d6efd; border-radius: 6px; }
+    .hero { padding: 80px 20px; text-align: center; }
+  </style>
+</head>
+<body>
+
+<!-- ===== BOOTSTRAP NAVBAR =====
+  navbar-expand-lg: collapses to hamburger on screens < lg (992px)
+  navbar-dark bg-dark: dark background with white text
+-->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+  <div class="container">
+
+    <!-- BRAND / LOGO -->
+    <a class="navbar-brand fw-bold" href="#">Dev<span class="text-primary">Studio</span></a>
+
+    <!-- HAMBURGER BUTTON: shown on mobile, auto-toggled by Bootstrap JS -->
+    <!-- data-bs-toggle="collapse" + data-bs-target links button to the menu div -->
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#navMenu"
+            aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- COLLAPSIBLE MENU -->
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">About</a>
+        </li>
+
+        <!-- DROPDOWN 1: Services
+          Bootstrap dropdown: data-bs-toggle="dropdown" triggers the dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+            Services
+          </a>
+          <!-- Bootstrap dropdown-menu: auto-positioned below the parent -->
+          <ul class="dropdown-menu dropdown-menu-dark">
+            <li><a class="dropdown-item" href="#">🌐 Web Development</a></li>
+            <li><a class="dropdown-item" href="#">📱 App Development</a></li>
+            <li><a class="dropdown-item" href="#">🎨 UI/UX Design</a></li>
+            <!-- Bootstrap dropdown divider -->
+            <li><hr class="dropdown-divider"/></li>
+            <li><a class="dropdown-item" href="#">☁️ Cloud Solutions</a></li>
+          </ul>
+        </li>
+
+        <!-- DROPDOWN 2: Portfolio -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+            Portfolio
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark">
+            <li><a class="dropdown-item" href="#">🛍️ E-Commerce</a></li>
+            <li><a class="dropdown-item" href="#">📊 Dashboards</a></li>
+            <li><a class="dropdown-item" href="#">🔬 SaaS Apps</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#">Blog</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Contact</a>
+        </li>
+      </ul>
+      <!-- Bootstrap outlined button in navbar -->
+      <a class="btn btn-outline-light ms-3" href="#">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE CONTENT -->
+<div class="hero">
+  <h2 class="display-5 fw-bold">Welcome to DevStudio 🚀</h2>
+  <p class="lead text-muted">
+    This is a fully responsive Bootstrap navbar with dropdowns.<br/>
+    Resize the window to see the hamburger menu on mobile!
+  </p>
+  <a href="#" class="btn btn-primary btn-lg mt-3">View Our Work</a>
+</div>
+
+<!-- Bootstrap JS: required for dropdown and collapse to work -->
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shopping Cart System</title>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <style>
+    body { background: #f4f6f9; }
+    .product-emoji { font-size: 40px; }
+    /* Bootstrap card hover effect */
+    .product-card { transition: transform 0.2s; cursor: pointer; }
+    .product-card:hover { transform: translateY(-4px); }
+    .price-text { color: #dc3545; font-weight: 800; font-size: 18px; }
+    /* Sticky cart on desktop */
+    .cart-sticky { position: sticky; top: 20px; }
+  </style>
+</head>
+<body>
+
+<!-- Bootstrap navbar showing cart count -->
+<nav class="navbar navbar-dark bg-dark mb-4">
+  <div class="container">
+    <span class="navbar-brand fw-bold">🛒 Shopping Cart</span>
+    <span class="badge bg-danger fs-6" id="cartBadge">0 items</span>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="row g-4">
+
+    <!-- LEFT: Products Grid -->
+    <div class="col-md-8">
+      <h5 class="mb-3 fw-bold">📦 Products</h5>
+      <div class="row g-3" id="productGrid"></div>
+    </div>
+
+    <!-- RIGHT: Cart (sticky) -->
+    <div class="col-md-4">
+      <div class="cart-sticky">
+        <div class="card shadow">
+          <div class="card-header bg-dark text-white fw-bold">
+            🛒 Your Cart (<span id="cartCount">0</span> items)
+          </div>
+          <div class="card-body p-2" id="cartItems">
+            <!-- Bootstrap alert for empty cart message -->
+            <div class="alert alert-secondary text-center mb-0" id="emptyMsg">
+              Your cart is empty!
+            </div>
+          </div>
+          <!-- Cart summary footer -->
+          <div class="card-footer" id="cartSummary" style="display:none">
+            <div class="d-flex justify-content-between text-muted small mb-1">
+              <span>Subtotal:</span><span id="subtotal">₹0</span>
+            </div>
+            <div class="d-flex justify-content-between text-muted small mb-2">
+              <span>Tax (5%):</span><span id="tax">₹0</span>
+            </div>
+            <div class="d-flex justify-content-between fw-bold fs-5 mb-3">
+              <span>Total:</span><span class="text-danger" id="grandTotal">₹0</span>
+            </div>
+            <!-- Bootstrap success button for checkout -->
+            <button class="btn btn-success w-100" onclick="checkout()">✅ Checkout</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const products = [
+    { id:1, name:"Headphones",  emoji:"🎧", price:1999 },
+    { id:2, name:"Keyboard",    emoji:"⌨️", price:2499 },
+    { id:3, name:"Mouse",       emoji:"🖱️", price:799  },
+    { id:4, name:"Monitor",     emoji:"🖥️", price:8999 },
+    { id:5, name:"Webcam",      emoji:"📷", price:3499 },
+    { id:6, name:"USB Hub",     emoji:"🔌", price:599  },
+  ];
+
+  let cart = {}; // { productId: { ...product, qty } }
+
+  // ===== RENDER PRODUCTS =====
+  function renderProducts() {
+    const grid = document.getElementById("productGrid");
+    products.forEach(p => {
+      const col = document.createElement("div");
+      col.className = "col-6 col-sm-4";
+      col.innerHTML = `
+        <div class="card product-card text-center shadow-sm p-3">
+          <div class="product-emoji mb-2">${p.emoji}</div>
+          <h6 class="fw-bold">${p.name}</h6>
+          <div class="price-text mb-2">₹${p.price.toLocaleString()}</div>
+          <button class="btn btn-sm btn-dark w-100" onclick="addToCart(${p.id})">+ Add</button>
+        </div>
+      `;
+      grid.appendChild(col);
+    });
+  }
+
+  function addToCart(id) {
+    if (cart[id]) cart[id].qty++;
+    else cart[id] = { ...products.find(p => p.id === id), qty: 1 };
+    renderCart();
+  }
+
+  function changeQty(id, delta) {
+    if (cart[id]) { cart[id].qty += delta; if (cart[id].qty <= 0) delete cart[id]; }
+    renderCart();
+  }
+
+  function removeFromCart(id) { delete cart[id]; renderCart(); }
+
+  // ===== RENDER CART =====
+  function renderCart() {
+    const keys = Object.keys(cart);
+    const cartItems  = document.getElementById("cartItems");
+    const cartSummary = document.getElementById("cartSummary");
+    const emptyMsg   = document.getElementById("emptyMsg");
+
+    const totalQty = keys.reduce((s, k) => s + cart[k].qty, 0);
+    document.getElementById("cartCount").textContent = totalQty;
+    document.getElementById("cartBadge").textContent = totalQty + " items";
+
+    if (keys.length === 0) {
+      emptyMsg.style.display = "block";
+      cartSummary.style.display = "none";
+      cartItems.innerHTML = `<div class="alert alert-secondary text-center mb-0" id="emptyMsg">Your cart is empty!</div>`;
+      return;
+    }
+
+    emptyMsg && (emptyMsg.style.display = "none");
+    cartSummary.style.display = "block";
+
+    let subtotal = 0;
+    let html = "";
+    keys.forEach(id => {
+      const item = cart[id];
+      const total = item.price * item.qty;
+      subtotal += total;
+      html += `
+        <div class="d-flex align-items-center gap-2 py-2 border-bottom">
+          <span>${item.emoji}</span>
+          <span class="flex-grow-1 small fw-bold">${item.name}</span>
+          <!-- Bootstrap btn-group for +/- quantity controls -->
+          <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-secondary" onclick="changeQty(${id},-1)">−</button>
+            <button class="btn btn-outline-secondary disabled">${item.qty}</button>
+            <button class="btn btn-outline-secondary" onclick="changeQty(${id},+1)">+</button>
+          </div>
+          <span class="small text-danger fw-bold">₹${total.toLocaleString()}</span>
+          <button class="btn btn-sm btn-link text-danger p-0" onclick="removeFromCart(${id})">🗑</button>
+        </div>
+      `;
+    });
+    cartItems.innerHTML = html;
+
+    const tax = Math.round(subtotal * 0.05);
+    document.getElementById("subtotal").textContent  = `₹${subtotal.toLocaleString()}`;
+    document.getElementById("tax").textContent       = `₹${tax.toLocaleString()}`;
+    document.getElementById("grandTotal").textContent = `₹${(subtotal+tax).toLocaleString()}`;
+  }
+
+  function checkout() {
+    alert("✅ Order placed! Total: " + document.getElementById("grandTotal").textContent);
+    cart = {}; renderCart();
+  }
+
+  renderProducts();
+</script>
+</body>
+</html>

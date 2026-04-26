@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Blog Layout</title>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <style>
+    body { background: #f8f9fa; }
+    /* Blog post card hover */
+    .blog-card { transition: transform 0.2s, box-shadow 0.2s; }
+    .blog-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.1) !important; }
+    /* Post emoji banner */
+    .post-banner { height: 140px; display: flex; align-items: center;
+                   justify-content: center; font-size: 60px; border-radius: 8px 8px 0 0; }
+  </style>
+</head>
+<body>
+
+<!-- ===== HEADER: Bootstrap navbar ===== -->
+<header>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand fw-bold fs-4">✍️ DevBlog</a>
+      <div class="d-flex gap-2 ms-auto">
+        <a class="btn btn-outline-light btn-sm" href="#">Login</a>
+        <a class="btn btn-primary btn-sm" href="#">Subscribe</a>
+      </div>
+    </div>
+  </nav>
+  <!-- Sub-header / hero banner -->
+  <div class="bg-primary text-white text-center py-4">
+    <h2 class="fw-bold mb-1">Web Development Blog</h2>
+    <p class="mb-0 opacity-75">Tutorials, Tips & Tricks for Modern Web Developers</p>
+  </div>
+</header>
+
+<!-- ===== MAIN CONTENT AREA ===== -->
+<div class="container py-4">
+  <!-- Bootstrap row: 8 cols for content, 4 cols for sidebar -->
+  <div class="row g-4">
+
+    <!-- ===== MAIN CONTENT (col-md-8) ===== -->
+    <main class="col-md-8">
+
+      <!-- FEATURED POST -->
+      <div class="card blog-card shadow-sm mb-4">
+        <div class="post-banner" style="background:#e3f2fd">📱</div>
+        <div class="card-body">
+          <!-- Bootstrap badge for category -->
+          <span class="badge bg-primary mb-2">Featured</span>
+          <h4 class="card-title fw-bold">Getting Started with Responsive Web Design</h4>
+          <p class="card-text text-muted">Learn how to build websites that look great on all screen sizes using CSS media queries, Bootstrap grid, and flexible layouts...</p>
+          <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">📅 April 26, 2025 &bull; 👤 Gauri Patil</small>
+            <a href="#" class="btn btn-sm btn-outline-primary">Read More →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOG POST GRID: Bootstrap row of 2 cards -->
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="card blog-card shadow-sm h-100">
+            <div class="post-banner" style="background:#e8f5e9">⚡</div>
+            <div class="card-body">
+              <span class="badge bg-success mb-2">JavaScript</span>
+              <h5 class="fw-bold">JavaScript ES6 Features You Must Know</h5>
+              <p class="text-muted small">Arrow functions, destructuring, spread operator, async/await...</p>
+              <a href="#" class="btn btn-sm btn-outline-success">Read More →</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card blog-card shadow-sm h-100">
+            <div class="post-banner" style="background:#fff3e0">🛢️</div>
+            <div class="card-body">
+              <span class="badge bg-warning text-dark mb-2">Database</span>
+              <h5 class="fw-bold">MongoDB vs MySQL: Which One to Choose?</h5>
+              <p class="text-muted small">Comparing NoSQL vs SQL for modern web applications...</p>
+              <a href="#" class="btn btn-sm btn-outline-warning">Read More →</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card blog-card shadow-sm h-100">
+            <div class="post-banner" style="background:#f3e5f5">🎨</div>
+            <div class="card-body">
+              <span class="badge bg-purple mb-2" style="background:#7952b3">CSS</span>
+              <h5 class="fw-bold">Master CSS Flexbox in 10 Minutes</h5>
+              <p class="text-muted small">A visual guide to flexbox properties with live examples...</p>
+              <a href="#" class="btn btn-sm btn-outline-secondary">Read More →</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card blog-card shadow-sm h-100">
+            <div class="post-banner" style="background:#fce4ec">🚀</div>
+            <div class="card-body">
+              <span class="badge bg-danger mb-2">Node.js</span>
+              <h5 class="fw-bold">Build Your First REST API with Express.js</h5>
+              <p class="text-muted small">Step-by-step guide to creating RESTful APIs using Node and Express...</p>
+              <a href="#" class="btn btn-sm btn-outline-danger">Read More →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bootstrap pagination -->
+      <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+          <li class="page-item disabled"><a class="page-link">Previous</a></li>
+          <li class="page-item active"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+      </nav>
+    </main>
+
+    <!-- ===== SIDEBAR (col-md-4) ===== -->
+    <aside class="col-md-4">
+
+      <!-- SEARCH WIDGET -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white fw-bold">🔍 Search</div>
+        <div class="card-body">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search posts..."/>
+            <button class="btn btn-primary">Go</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CATEGORIES -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white fw-bold">📂 Categories</div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item d-flex justify-content-between">HTML & CSS <span class="badge bg-primary">12</span></li>
+          <li class="list-group-item d-flex justify-content-between">JavaScript <span class="badge bg-success">8</span></li>
+          <li class="list-group-item d-flex justify-content-between">Node.js <span class="badge bg-warning text-dark">5</span></li>
+          <li class="list-group-item d-flex justify-content-between">MongoDB <span class="badge bg-danger">4</span></li>
+          <li class="list-group-item d-flex justify-content-between">React.js <span class="badge bg-info text-dark">6</span></li>
+        </ul>
+      </div>
+
+      <!-- RECENT POSTS -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white fw-bold">🕐 Recent Posts</div>
+        <div class="card-body p-2">
+          <a href="#" class="list-group-item list-group-item-action border-0 small">📌 Intro to Bootstrap 5</a>
+          <a href="#" class="list-group-item list-group-item-action border-0 small">📌 CSS Grid Layout Guide</a>
+          <a href="#" class="list-group-item list-group-item-action border-0 small">📌 Async/Await in JS</a>
+          <a href="#" class="list-group-item list-group-item-action border-0 small">📌 MongoDB CRUD Ops</a>
+        </div>
+      </div>
+
+      <!-- TAGS: Bootstrap badges -->
+      <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white fw-bold">🏷️ Tags</div>
+        <div class="card-body d-flex flex-wrap gap-2">
+          <a href="#" class="badge bg-primary text-decoration-none">HTML</a>
+          <a href="#" class="badge bg-success text-decoration-none">CSS</a>
+          <a href="#" class="badge bg-warning text-dark text-decoration-none">JavaScript</a>
+          <a href="#" class="badge bg-danger text-decoration-none">Node.js</a>
+          <a href="#" class="badge bg-info text-dark text-decoration-none">MongoDB</a>
+          <a href="#" class="badge bg-secondary text-decoration-none">Bootstrap</a>
+          <a href="#" class="badge bg-dark text-decoration-none">REST API</a>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="bg-dark text-white mt-4 py-4">
+  <div class="container text-center">
+    <p class="mb-1 fw-bold">✍️ DevBlog</p>
+    <p class="text-muted small mb-0">© 2025 All rights reserved. Built with Bootstrap 5.</p>
+  </div>
+</footer>
+
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

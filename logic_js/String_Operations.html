@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>String Operations</title>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <style> body { background: #f0f4f8; } </style>
+</head>
+<body>
+
+<div class="container py-4">
+  <h1 class="text-center mb-4">🔤 String Operations</h1>
+
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow p-4">
+
+        <!-- INPUT: Bootstrap form-control -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Enter a string:</label>
+          <input type="text" id="strInput" class="form-control form-control-lg"
+            placeholder="Type something... e.g. Hello World"/>
+        </div>
+
+        <!-- OPERATION BUTTONS: Bootstrap d-grid button grid -->
+        <div class="row g-2 mb-4">
+          <div class="col-6 col-md-3">
+            <button class="btn btn-dark w-100" onclick="runAll()">▶ Run All</button>
+          </div>
+          <div class="col-6 col-md-3">
+            <button class="btn btn-outline-primary w-100" onclick="runOp('reverse')">🔁 Reverse</button>
+          </div>
+          <div class="col-6 col-md-3">
+            <button class="btn btn-outline-primary w-100" onclick="runOp('upper')">⬆ Uppercase</button>
+          </div>
+          <div class="col-6 col-md-3">
+            <button class="btn btn-outline-primary w-100" onclick="runOp('lower')">⬇ Lowercase</button>
+          </div>
+          <div class="col-6 col-md-3">
+            <button class="btn btn-outline-success w-100" onclick="runOp('length')">📏 Length</button>
+          </div>
+          <div class="col-6 col-md-3">
+            <button class="btn btn-outline-success w-100" onclick="runOp('words')">💬 Word Count</button>
+          </div>
+          <div class="col-6 col-md-3">
+            <button class="btn btn-outline-success w-100" onclick="runOp('vowels')">🔡 Vowels</button>
+          </div>
+          <div class="col-6 col-md-3">
+            <button class="btn btn-outline-warning w-100" onclick="runOp('palindrome')">🔄 Palindrome?</button>
+          </div>
+          <div class="col-6 col-md-3">
+            <button class="btn btn-outline-info w-100" onclick="runOp('title')">📝 Title Case</button>
+          </div>
+          <div class="col-6 col-md-3">
+            <button class="btn btn-outline-secondary w-100" onclick="runOp('trim')">✂ Trim</button>
+          </div>
+        </div>
+
+        <!-- RESULTS: Bootstrap table -->
+        <div id="resultSection">
+          <h5 class="fw-bold mb-3">📊 Results</h5>
+          <div id="resultContainer">
+            <p class="text-muted text-center">Enter a string and click an operation.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // ===== STRING OPERATIONS =====
+  // split('').reverse().join('') — classic JS reverse technique
+  const reverseStr   = s => s.split("").reverse().join("");
+  const toUpper      = s => s.toUpperCase();
+  const toLower      = s => s.toLowerCase();
+  const getLength    = s => s.length;
+  const wordCount    = s => s.trim() === "" ? 0 : s.trim().split(/\s+/).length;
+  const countVowels  = s => (s.match(/[aeiou]/gi) || []).length;
+  const isPalindrome = s => {
+    const c = s.toLowerCase().replace(/[^a-z0-9]/g,"");
+    return c === reverseStr(c) ? "✅ Yes, it's a palindrome!" : "❌ Not a palindrome.";
+  };
+  const toTitleCase  = s => s.toLowerCase().split(" ").map(w => w.charAt(0).toUpperCase()+w.slice(1)).join(" ");
+  const trimStr      = s => s.trim();
+
+  const operations = {
+    reverse   : { label:"🔁 Reversed",       fn: reverseStr   },
+    upper     : { label:"⬆ Uppercase",        fn: toUpper      },
+    lower     : { label:"⬇ Lowercase",        fn: toLower      },
+    length    : { label:"📏 Length (chars)",   fn: getLength    },
+    words     : { label:"💬 Word Count",       fn: wordCount    },
+    vowels    : { label:"🔡 Vowel Count",      fn: countVowels  },
+    palindrome: { label:"🔄 Is Palindrome?",   fn: isPalindrome },
+    title     : { label:"📝 Title Case",       fn: toTitleCase  },
+    trim      : { label:"✂ Trimmed",          fn: trimStr      },
+  };
+
+  function runOp(name) {
+    const str = document.getElementById("strInput").value;
+    if (!str) { alert("Please enter a string first!"); return; }
+    showResults([{ label: operations[name].label, value: operations[name].fn(str) }]);
+  }
+
+  function runAll() {
+    const str = document.getElementById("strInput").value;
+    if (!str) { alert("Please enter a string first!"); return; }
+    showResults(Object.entries(operations).map(([k,op]) => ({ label: op.label, value: op.fn(str) })));
+  }
+
+  // ===== SHOW RESULTS using Bootstrap table =====
+  function showResults(results) {
+    document.getElementById("resultContainer").innerHTML = `
+      <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+          <tr><th>Operation</th><th>Result</th></tr>
+        </thead>
+        <tbody>
+          ${results.map(r => `
+            <tr>
+              <td class="text-muted">${r.label}</td>
+              <td class="fw-bold text-primary">${r.value}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    `;
+  }
+</script>
+</body>
+</html>

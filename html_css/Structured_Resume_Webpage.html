@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resume - Gauri Patil</title>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <style>
+    body { background: #f0f4f8; }
+    /* Sidebar dark panel */
+    .sidebar { background: #2c3e50; color: white; min-height: 100%; padding: 28px 20px; }
+    .sidebar .section-title { color: #3498db; font-size: 12px; letter-spacing: 2px;
+      text-transform: uppercase; border-bottom: 1px solid #3498db; padding-bottom: 4px; margin: 20px 0 12px; }
+    /* Skill bars using Bootstrap progress */
+    .progress { height: 8px; background: #1a2a3a; margin-top: 4px; }
+    .progress-bar { background: #3498db; }
+    /* Header gradient banner */
+    .resume-header { background: linear-gradient(135deg, #2c3e50, #3498db); color: white; padding: 32px; }
+    .main-section-title { color: #3498db; font-size: 12px; letter-spacing: 2px;
+      text-transform: uppercase; border-bottom: 2px solid #3498db; padding-bottom: 4px; margin: 20px 0 14px; }
+    /* Project item with left border */
+    .project-item { border-left: 3px solid #3498db; padding-left: 12px; margin-bottom: 14px; }
+    @media print { .print-btn { display: none; } body { background: white; } }
+  </style>
+</head>
+<body>
+
+<!-- Print button -->
+<div class="text-center py-3">
+  <button class="btn btn-primary print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+</div>
+
+<!-- RESUME WRAPPER: Bootstrap card -->
+<div class="container mb-4">
+  <div class="card shadow-lg overflow-hidden" style="max-width:900px; margin:0 auto;">
+
+    <!-- HEADER -->
+    <div class="resume-header d-flex justify-content-between flex-wrap gap-3">
+      <div>
+        <h2 class="fw-bold mb-1">Gauri Patil</h2>
+        <p class="mb-0 opacity-75">B.E. Computer Engineering | Full Stack Developer</p>
+      </div>
+      <div class="text-end small lh-lg">
+        <div>📧 gauri.patil@email.com</div>
+        <div>📞 +91 9876543210</div>
+        <div>📍 Pune, Maharashtra</div>
+        <div>🔗 linkedin.com/in/gauripatil</div>
+      </div>
+    </div>
+
+    <!-- Bootstrap row: sidebar + main content -->
+    <div class="row g-0">
+
+      <!-- SIDEBAR -->
+      <div class="col-md-4 sidebar">
+
+        <div class="section-title">Technical Skills</div>
+        <!-- Bootstrap progress bars for skills -->
+        <div class="mb-2"><div class="d-flex justify-content-between small"><span>HTML & CSS</span><span>90%</span></div>
+          <div class="progress"><div class="progress-bar" style="width:90%"></div></div></div>
+        <div class="mb-2"><div class="d-flex justify-content-between small"><span>JavaScript</span><span>80%</span></div>
+          <div class="progress"><div class="progress-bar" style="width:80%"></div></div></div>
+        <div class="mb-2"><div class="d-flex justify-content-between small"><span>React.js</span><span>70%</span></div>
+          <div class="progress"><div class="progress-bar" style="width:70%"></div></div></div>
+        <div class="mb-2"><div class="d-flex justify-content-between small"><span>Node.js</span><span>65%</span></div>
+          <div class="progress"><div class="progress-bar" style="width:65%"></div></div></div>
+        <div class="mb-2"><div class="d-flex justify-content-between small"><span>MongoDB</span><span>60%</span></div>
+          <div class="progress"><div class="progress-bar" style="width:60%"></div></div></div>
+        <div class="mb-2"><div class="d-flex justify-content-between small"><span>Python</span><span>75%</span></div>
+          <div class="progress"><div class="progress-bar" style="width:75%"></div></div></div>
+
+        <div class="section-title">Tools</div>
+        <!-- Bootstrap badges for tools -->
+        <div class="d-flex flex-wrap gap-1">
+          <span class="badge bg-primary">Git</span>
+          <span class="badge bg-primary">GitHub</span>
+          <span class="badge bg-primary">VS Code</span>
+          <span class="badge bg-primary">Postman</span>
+          <span class="badge bg-primary">Figma</span>
+          <span class="badge bg-primary">Linux</span>
+        </div>
+
+        <div class="section-title">Languages</div>
+        <ul class="list-unstyled small">
+          <li>▸ Marathi (Native)</li>
+          <li>▸ Hindi (Fluent)</li>
+          <li>▸ English (Proficient)</li>
+        </ul>
+
+        <div class="section-title">Interests</div>
+        <ul class="list-unstyled small">
+          <li>▸ Open Source</li>
+          <li>▸ UI/UX Design</li>
+          <li>▸ Competitive Coding</li>
+        </ul>
+      </div>
+
+      <!-- MAIN CONTENT -->
+      <div class="col-md-8 p-4">
+
+        <div class="main-section-title">Objective</div>
+        <p class="text-muted small">Motivated Computer Engineering student with hands-on experience in full stack web development using HTML, CSS, JavaScript, Node.js, and MongoDB. Seeking an internship or entry-level role to contribute to real-world projects and grow as a developer.</p>
+
+        <div class="main-section-title">Education</div>
+        <div class="mb-3">
+          <h6 class="fw-bold mb-0">B.E. in Computer Engineering</h6>
+          <div class="text-primary small">PCCOE, Pune</div>
+          <div class="d-flex justify-content-between">
+            <small class="text-muted">2021 – Present</small>
+            <small class="text-success fw-bold">CGPA: 8.4 / 10</small>
+          </div>
+        </div>
+        <div class="mb-3">
+          <h6 class="fw-bold mb-0">HSC (12th Science)</h6>
+          <div class="text-primary small">Maharashtra State Board</div>
+          <div class="d-flex justify-content-between">
+            <small class="text-muted">2020 – 2021</small>
+            <small class="text-success fw-bold">87.40%</small>
+          </div>
+        </div>
+        <div class="mb-3">
+          <h6 class="fw-bold mb-0">SSC (10th)</h6>
+          <div class="text-primary small">Maharashtra State Board</div>
+          <div class="d-flex justify-content-between">
+            <small class="text-muted">2018 – 2019</small>
+            <small class="text-success fw-bold">92.60%</small>
+          </div>
+        </div>
+
+        <div class="main-section-title">Projects</div>
+        <div class="project-item">
+          <h6 class="fw-bold mb-1">Student Record Management System</h6>
+          <p class="small text-muted mb-1">Full stack CRUD app to manage student records using Express.js and MongoDB.</p>
+          <small class="text-primary">🛠 Node.js | Express | MongoDB | HTML/CSS</small>
+        </div>
+        <div class="project-item">
+          <h6 class="fw-bold mb-1">E-Commerce Product Gallery</h6>
+          <p class="small text-muted mb-1">Dynamic product listing with category filtering and shopping cart using vanilla JS.</p>
+          <small class="text-primary">🛠 HTML | CSS | JavaScript | JSON</small>
+        </div>
+        <div class="project-item">
+          <h6 class="fw-bold mb-1">Quiz Application</h6>
+          <p class="small text-muted mb-1">MCQ quiz app with scoring, instant feedback, and answer review at the end.</p>
+          <small class="text-primary">🛠 HTML | CSS | JavaScript</small>
+        </div>
+
+        <div class="main-section-title">Contact Information</div>
+        <div class="small text-muted lh-lg">
+          <div>📧 gauri.patil@email.com</div>
+          <div>📞 +91 9876543210</div>
+          <div>📍 Pune – 411005, Maharashtra</div>
+          <div>🔗 github.com/gauripatil</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

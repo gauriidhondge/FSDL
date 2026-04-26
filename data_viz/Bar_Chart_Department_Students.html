@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Bar Chart - Department Students</title>
+  <!-- Import Chart.js from CDN — the most popular JS charting library -->
+  <script src="../node_modules/chart.js/dist/chart.umd.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; padding: 40px 20px; }
+    h1 { text-align: center; margin-bottom: 6px; color: #2c3e50; }
+    p.sub { text-align: center; color: #888; margin-bottom: 30px; font-size: 14px; }
+    .chart-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 14px;
+      padding: 28px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    /* ===== STATS ROW ===== */
+    .stats { display: flex; justify-content: center; gap: 28px; flex-wrap: wrap; margin-top: 24px; }
+    .stat-box { text-align: center; }
+    .stat-num { font-size: 28px; font-weight: 800; color: #3498db; }
+    .stat-label { font-size: 12px; color: #888; }
+  </style>
+</head>
+<body>
+
+  <h1>📊 Department-wise Student Enrollment</h1>
+  <p class="sub">Static data visualization using Chart.js Bar Chart</p>
+
+  <div class="chart-container">
+    <!-- canvas is the required HTML element for Chart.js rendering -->
+    <canvas id="barChart"></canvas>
+
+    <div class="stats">
+      <div class="stat-box"><div class="stat-num" id="totalStat">0</div><div class="stat-label">Total Students</div></div>
+      <div class="stat-box"><div class="stat-num" id="maxStat">0</div><div class="stat-label">Largest Dept</div></div>
+      <div class="stat-box"><div class="stat-num" id="avgStat">0</div><div class="stat-label">Avg per Dept</div></div>
+    </div>
+  </div>
+
+  <script>
+    // ===== STATIC DATA =====
+    // Department names and number of students in each
+    const departments = ['Computer Engg', 'IT', 'Electronics', 'Mechanical', 'Civil', 'ENTC', 'AI & ML'];
+    const students    = [240, 180, 160, 200, 120, 140, 210];
+
+    // ===== CALCULATE STATS =====
+    const total = students.reduce((a, b) => a + b, 0);
+    const max   = Math.max(...students);
+    const avg   = Math.round(total / students.length);
+    document.getElementById("totalStat").textContent = total;
+    document.getElementById("maxStat").textContent   = max;
+    document.getElementById("avgStat").textContent   = avg;
+
+    // ===== CREATE BAR CHART =====
+    // Chart.js uses a canvas element and a configuration object
+    const ctx = document.getElementById("barChart").getContext("2d"); // get 2D drawing context
+
+    new Chart(ctx, {
+      type: 'bar', // chart type: 'bar', 'line', 'pie', 'doughnut', etc.
+
+      data: {
+        labels: departments, // X-axis labels
+        datasets: [{
+          label: 'Number of Students',
+          data: students, // Y-axis values
+
+          // Array of colors — one per bar
+          backgroundColor: [
+            'rgba(52,  152, 219, 0.8)',  // blue
+            'rgba(46,  204, 113, 0.8)',  // green
+            'rgba(231, 76,  60,  0.8)',  // red
+            'rgba(241, 196, 15,  0.8)',  // yellow
+            'rgba(155, 89,  182, 0.8)',  // purple
+            'rgba(26,  188, 156, 0.8)',  // teal
+            'rgba(230, 126, 34,  0.8)',  // orange
+          ],
+
+          // Border colors (slightly darker than fill)
+          borderColor: ['#2980b9','#27ae60','#c0392b','#f39c12','#8e44ad','#16a085','#d35400'],
+          borderWidth: 2,
+          borderRadius: 6,  // rounded bar tops
+        }]
+      },
+
+      // ===== CHART OPTIONS =====
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' },
+          title: {
+            display: true,
+            text: 'Student Count by Department (2024–25)',
+            font: { size: 16 }
+          },
+          // Tooltip: shown when hovering over bars
+          tooltip: {
+            callbacks: {
+              label: ctx => ` ${ctx.parsed.y} students`
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true, // Y-axis starts at 0
+            title: { display: true, text: 'Number of Students' },
+            grid: { color: '#f0f0f0' }
+          },
+          x: {
+            title: { display: true, text: 'Department' },
+          }
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>

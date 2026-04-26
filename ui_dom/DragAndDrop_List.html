@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Drag-and-Drop List</title>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <style>
+    body { background: #f0f4f8; }
+    /* draggable item cursor */
+    .list-item { cursor: grab; user-select: none; transition: transform 0.2s, box-shadow 0.2s; }
+    .list-item:active { cursor: grabbing; }
+    /* Bootstrap border-start used for drag-over highlight */
+    .list-item.drag-over { border-left: 4px solid #0d6efd !important; background: #e8f4fd; transform: scale(1.02); }
+    .list-item.dragging  { opacity: 0.4; }
+  </style>
+</head>
+<body>
+
+<div class="container py-4">
+  <h1 class="text-center mb-2">↕️ Drag-and-Drop List</h1>
+  <p class="text-center text-muted mb-4">Drag items to reorder your workflow</p>
+
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <!-- Bootstrap list-group for styled list items -->
+      <ul class="list-group shadow" id="sortableList"></ul>
+      <div class="alert alert-info mt-3 text-center small" id="orderDisplay"></div>
+    </div>
+  </div>
+</div>
+
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const items = [
+    { id:1, text:"Design UI Mockups",    icon:"🎨" },
+    { id:2, text:"Write HTML Structure", icon:"📝" },
+    { id:3, text:"Apply CSS Styling",    icon:"💅" },
+    { id:4, text:"Add JavaScript Logic", icon:"⚡" },
+    { id:5, text:"Test on Mobile",       icon:"📱" },
+    { id:6, text:"Deploy to Server",     icon:"🚀" },
+  ];
+
+  let draggedItem = null;
+
+  function renderList() {
+    const ul = document.getElementById("sortableList");
+    ul.innerHTML = "";
+    items.forEach((item, index) => {
+      const li = document.createElement("li");
+      // Bootstrap list-group-item classes for styled row
+      li.className = "list-group-item list-item d-flex align-items-center gap-3";
+      li.setAttribute("draggable", "true"); // HTML5 drag API
+      li.dataset.index = index;
+
+      li.innerHTML = `
+        <span class="text-muted">⠿</span>
+        <span class="fs-5">${item.icon}</span>
+        <span class="flex-grow-1 fw-semibold">${item.text}</span>
+        <!-- Bootstrap badge for step number -->
+        <span class="badge bg-secondary rounded-pill">#${index + 1}</span>
+      `;
+
+      // HTML5 Drag & Drop events
+      li.addEventListener("dragstart", function() {
+        draggedItem = this;
+        setTimeout(() => this.classList.add("dragging"), 0);
+      });
+      li.addEventListener("dragend", function() {
+        this.classList.remove("dragging");
+        document.querySelectorAll(".list-item").forEach(el => el.classList.remove("drag-over"));
+        draggedItem = null;
+        updateOrder();
+      });
+      li.addEventListener("dragover", function(e) {
+        e.preventDefault(); // required to allow drop
+        if (this !== draggedItem) this.classList.add("drag-over");
+      });
+      li.addEventListener("dragleave", function() {
+        this.classList.remove("drag-over");
+      });
+      li.addEventListener("drop", function(e) {
+        e.preventDefault();
+        if (this !== draggedItem) {
+          const from = parseInt(draggedItem.dataset.index);
+          const to   = parseInt(this.dataset.index);
+          [items[from], items[to]] = [items[to], items[from]]; // swap in array
+          renderList();
+        }
+      });
+
+      ul.appendChild(li);
+    });
+    updateOrder();
+  }
+
+  function updateOrder() {
+    document.getElementById("orderDisplay").textContent =
+      "Order: " + items.map(i => i.text).join(" → ");
+  }
+
+  renderList();
+</script>
+</body>
+</html>

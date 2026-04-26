@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pie/Doughnut Chart - Attendance</title>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <!-- LOCAL Chart.js — no internet needed -->
+  <script src="../node_modules/chart.js/dist/chart.umd.js"></script>
+  <style> body { background: #f0f4f8; } </style>
+</head>
+<body>
+
+<div class="container py-4">
+  <h1 class="text-center mb-1">🍩 Attendance Distribution</h1>
+  <p class="text-center text-muted mb-4">Pie and Doughnut charts showing attendance data</p>
+
+  <!-- TOGGLE BUTTONS: switch between Pie and Doughnut -->
+  <div class="d-flex justify-content-center gap-3 mb-4">
+    <button class="btn btn-primary" onclick="switchChart('pie')">🥧 Pie Chart</button>
+    <button class="btn btn-outline-primary" onclick="switchChart('doughnut')">🍩 Doughnut Chart</button>
+  </div>
+
+  <div class="row justify-content-center g-4">
+
+    <!-- CHART CARD -->
+    <div class="col-md-5">
+      <div class="card shadow p-4 text-center">
+        <canvas id="attendanceChart" height="250"></canvas>
+      </div>
+    </div>
+
+    <!-- STATS CARDS: Bootstrap cards showing numbers -->
+    <div class="col-md-5">
+      <h5 class="fw-bold mb-3">📋 Attendance Summary</h5>
+
+      <div class="card mb-3 border-success">
+        <div class="card-body d-flex align-items-center gap-3">
+          <div class="fs-2">✅</div>
+          <div>
+            <div class="fw-bold text-success fs-4">75%</div>
+            <div class="text-muted small">Present — 75 out of 100 students</div>
+          </div>
+          <!-- Bootstrap progress bar -->
+          <div class="flex-grow-1">
+            <div class="progress"><div class="progress-bar bg-success" style="width:75%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-3 border-danger">
+        <div class="card-body d-flex align-items-center gap-3">
+          <div class="fs-2">❌</div>
+          <div>
+            <div class="fw-bold text-danger fs-4">15%</div>
+            <div class="text-muted small">Absent — 15 out of 100 students</div>
+          </div>
+          <div class="flex-grow-1">
+            <div class="progress"><div class="progress-bar bg-danger" style="width:15%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-3 border-warning">
+        <div class="card-body d-flex align-items-center gap-3">
+          <div class="fs-2">📋</div>
+          <div>
+            <div class="fw-bold text-warning fs-4">10%</div>
+            <div class="text-muted small">On Leave — 10 out of 100 students</div>
+          </div>
+          <div class="flex-grow-1">
+            <div class="progress"><div class="progress-bar bg-warning" style="width:10%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bootstrap alert for minimum attendance warning -->
+      <div class="alert alert-warning small">
+        ⚠️ Minimum 75% attendance required to appear for exams.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // ===== ATTENDANCE DATA =====
+  const labels = ['Present', 'Absent', 'On Leave'];
+  const data   = [75, 15, 10];
+  const colors = ['#27ae60', '#e74c3c', '#f39c12'];
+
+  let chartInstance = null;
+
+  // ===== CREATE CHART =====
+  // type parameter: 'pie' or 'doughnut' — both use same data, different visual
+  function createChart(type) {
+    if (chartInstance) chartInstance.destroy(); // destroy old chart before creating new
+
+    chartInstance = new Chart(document.getElementById("attendanceChart"), {
+      type: type,    // 'pie' or 'doughnut'
+      data: {
+        labels: labels,
+        datasets: [{
+          data: data,
+          backgroundColor: colors,
+          borderColor: "#fff",
+          borderWidth: 3,
+          hoverOffset: 10,   // slices pop out on hover
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: "bottom" },
+          title:  { display: true, text: `Attendance Distribution — ${type.charAt(0).toUpperCase()+type.slice(1)} Chart`, font: { size: 15 } }
+        }
+      }
+    });
+  }
+
+  // ===== SWITCH CHART TYPE =====
+  function switchChart(type) {
+    createChart(type);
+    document.querySelectorAll(".btn").forEach(b => b.classList.remove("btn-primary"));
+    document.querySelectorAll(".btn").forEach(b => b.classList.add("btn-outline-primary"));
+    event.target.classList.remove("btn-outline-primary");
+    event.target.classList.add("btn-primary");
+  }
+
+  createChart("pie"); // default on load
+</script>
+</body>
+</html>

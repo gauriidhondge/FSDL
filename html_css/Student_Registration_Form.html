@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Registration Form</title>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <style>
+    body { background: #f0f4f8; }
+
+    /* Section label styling */
+    .section-label {
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+      color: #0d6efd; font-weight: 700; margin-bottom: 14px;
+      border-left: 4px solid #0d6efd; padding-left: 8px;
+    }
+
+    /* Real-time validation: green border when input is valid */
+    .form-control.valid-field   { border-color: #198754; }
+    /* Red border when input is invalid and user has typed */
+    .form-control.invalid-field { border-color: #dc3545; }
+
+    /* Error message shown below each field */
+    .field-error {
+      color: #dc3545;
+      font-size: 12px;
+      margin-top: 4px;
+      display: none; /* hidden by default, shown via JS */
+    }
+    .field-error.show { display: block; }
+
+    /* Success message tick icon on valid field */
+    .valid-icon   { color: #198754; font-size: 13px; margin-top: 4px; display: none; }
+    .valid-icon.show { display: block; }
+  </style>
+</head>
+<body>
+
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+
+      <div class="card shadow-lg">
+        <!-- CARD HEADER -->
+        <div class="card-header text-white text-center py-4"
+             style="background: linear-gradient(135deg, #0d6efd, #6f42c1)">
+          <h3 class="mb-0 fw-bold">🎓 Student Registration</h3>
+          <p class="mb-0 opacity-75 small mt-1">Fill in all required fields to register</p>
+        </div>
+
+        <div class="card-body p-4">
+
+          <!-- FORM LEVEL ERROR: shown at top if submit attempted with errors -->
+          <div id="formError" class="alert alert-danger d-none" role="alert">
+            ⚠️ Please fix all errors below before submitting.
+          </div>
+
+          <form id="registrationForm" novalidate>
+
+            <!-- ===== SECTION 1: PERSONAL INFORMATION ===== -->
+            <div class="section-label">Personal Information</div>
+
+            <!-- FIRST NAME + LAST NAME -->
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">
+                  First Name <span class="text-danger">*</span>
+                </label>
+                <input type="text" class="form-control" id="firstName"
+                  placeholder="Enter first name"
+                  oninput="validateField('firstName')" onblur="validateField('firstName')"/>
+                <!-- Field-level error message (shown by JS) -->
+                <div class="field-error" id="firstNameError">
+                  ❌ First name is required (letters only, min 2 characters).
+                </div>
+                <div class="valid-icon" id="firstNameValid">✅ Looks good!</div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">
+                  Last Name <span class="text-danger">*</span>
+                </label>
+                <input type="text" class="form-control" id="lastName"
+                  placeholder="Enter last name"
+                  oninput="validateField('lastName')" onblur="validateField('lastName')"/>
+                <div class="field-error" id="lastNameError">
+                  ❌ Last name is required (letters only, min 2 characters).
+                </div>
+                <div class="valid-icon" id="lastNameValid">✅ Looks good!</div>
+              </div>
+            </div>
+
+            <!-- EMAIL -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">
+                Email Address <span class="text-danger">*</span>
+              </label>
+              <input type="email" class="form-control" id="email"
+                placeholder="e.g. student@college.edu"
+                oninput="validateField('email')" onblur="validateField('email')"/>
+              <div class="field-error" id="emailError">
+                ❌ Please enter a valid email address (e.g. name@domain.com).
+              </div>
+              <div class="valid-icon" id="emailValid">✅ Valid email!</div>
+            </div>
+
+            <!-- DOB + PHONE -->
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">
+                  Date of Birth <span class="text-danger">*</span>
+                </label>
+                <input type="date" class="form-control" id="dob"
+                  onchange="validateField('dob')" onblur="validateField('dob')"/>
+                <div class="field-error" id="dobError">
+                  ❌ Please select a valid date of birth (must be 15–30 years old).
+                </div>
+                <div class="valid-icon" id="dobValid">✅ Valid date of birth!</div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">
+                  Phone Number <span class="text-danger">*</span>
+                </label>
+                <input type="tel" class="form-control" id="phone"
+                  placeholder="e.g. 9876543210" maxlength="10"
+                  oninput="validateField('phone')" onblur="validateField('phone')"/>
+                <div class="field-error" id="phoneError">
+                  ❌ Phone must be exactly 10 digits (numbers only).
+                </div>
+                <div class="valid-icon" id="phoneValid">✅ Valid phone number!</div>
+              </div>
+            </div>
+
+            <!-- GENDER -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">
+                Gender <span class="text-danger">*</span>
+              </label>
+              <div class="d-flex gap-4">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="gender"
+                    id="male" value="Male" onchange="validateGender()"/>
+                  <label class="form-check-label" for="male">Male</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="gender"
+                    id="female" value="Female" onchange="validateGender()"/>
+                  <label class="form-check-label" for="female">Female</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="gender"
+                    id="other" value="Other" onchange="validateGender()"/>
+                  <label class="form-check-label" for="other">Other</label>
+                </div>
+              </div>
+              <div class="field-error" id="genderError">
+                ❌ Please select a gender.
+              </div>
+              <div class="valid-icon" id="genderValid">✅ Gender selected!</div>
+            </div>
+
+            <hr class="my-4"/>
+
+            <!-- ===== SECTION 2: ACADEMIC INFORMATION ===== -->
+            <div class="section-label">Academic Information</div>
+
+            <!-- COURSE + YEAR -->
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">
+                  Course <span class="text-danger">*</span>
+                </label>
+                <select class="form-select" id="course"
+                  onchange="validateField('course')" onblur="validateField('course')">
+                  <option value="">-- Select Course --</option>
+                  <option>B.E. Computer Engineering</option>
+                  <option>B.E. Information Technology</option>
+                  <option>B.E. Electronics</option>
+                  <option>B.E. Mechanical</option>
+                  <option>MBA</option>
+                  <option>MCA</option>
+                </select>
+                <div class="field-error" id="courseError">
+                  ❌ Please select a course.
+                </div>
+                <div class="valid-icon" id="courseValid">✅ Course selected!</div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">
+                  Year <span class="text-danger">*</span>
+                </label>
+                <select class="form-select" id="year"
+                  onchange="validateField('year')" onblur="validateField('year')">
+                  <option value="">-- Select Year --</option>
+                  <option>First Year</option>
+                  <option>Second Year</option>
+                  <option>Third Year</option>
+                  <option>Final Year</option>
+                </select>
+                <div class="field-error" id="yearError">
+                  ❌ Please select a year.
+                </div>
+                <div class="valid-icon" id="yearValid">✅ Year selected!</div>
+              </div>
+            </div>
+
+            <!-- ROLL NUMBER -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">
+                Roll Number <span class="text-danger">*</span>
+              </label>
+              <input type="text" class="form-control" id="rollNo"
+                placeholder="e.g. 21COMP045"
+                oninput="validateField('rollNo')" onblur="validateField('rollNo')"/>
+              <div class="field-error" id="rollNoError">
+                ❌ Roll number required (format: 2 digits + 4 letters + 3 digits, e.g. 21COMP045).
+              </div>
+              <div class="valid-icon" id="rollNoValid">✅ Valid roll number!</div>
+            </div>
+
+            <!-- ADDRESS -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">
+                Address <span class="text-danger">*</span>
+              </label>
+              <textarea class="form-control" id="address" rows="3"
+                placeholder="Flat No, Street, City, PIN Code"
+                oninput="validateField('address')" onblur="validateField('address')">
+              </textarea>
+              <div class="field-error" id="addressError">
+                ❌ Address is required (minimum 10 characters).
+              </div>
+              <div class="valid-icon" id="addressValid">✅ Address entered!</div>
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">
+                  Password <span class="text-danger">*</span>
+                </label>
+                <input type="password" class="form-control" id="password"
+                  placeholder="Minimum 8 characters"
+                  oninput="validateField('password')" onblur="validateField('password')"/>
+                <div class="field-error" id="passwordError">
+                  ❌ Password must be at least 8 characters with 1 number and 1 letter.
+                </div>
+                <div class="valid-icon" id="passwordValid">✅ Strong password!</div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">
+                  Confirm Password <span class="text-danger">*</span>
+                </label>
+                <input type="password" class="form-control" id="confirmPassword"
+                  placeholder="Re-enter password"
+                  oninput="validateField('confirmPassword')" onblur="validateField('confirmPassword')"/>
+                <div class="field-error" id="confirmPasswordError">
+                  ❌ Passwords do not match.
+                </div>
+                <div class="valid-icon" id="confirmPasswordValid">✅ Passwords match!</div>
+              </div>
+            </div>
+
+            <!-- TERMS CHECKBOX -->
+            <div class="form-check mb-4">
+              <input class="form-check-input" type="checkbox" id="terms"
+                onchange="validateTerms()"/>
+              <label class="form-check-label" for="terms">
+                I agree to the <a href="#">Terms and Conditions</a>
+                <span class="text-danger">*</span>
+              </label>
+              <div class="field-error" id="termsError">
+                ❌ You must agree to the Terms and Conditions.
+              </div>
+              <div class="valid-icon" id="termsValid">✅ Agreed!</div>
+            </div>
+
+            <!-- SUBMIT + RESET BUTTONS -->
+            <div class="d-grid gap-2">
+              <button type="button" class="btn btn-primary btn-lg" onclick="submitForm()">
+                ✅ Register Now
+              </button>
+              <button type="button" class="btn btn-outline-secondary" onclick="resetForm()">
+                🔄 Reset Form
+              </button>
+            </div>
+
+          </form>
+
+          <!-- SUCCESS MESSAGE: shown after successful submission -->
+          <div id="successMsg" class="alert alert-success mt-4 d-none text-center" role="alert">
+            <h5 class="fw-bold">🎉 Registration Successful!</h5>
+            <p class="mb-0" id="successDetails"></p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- VALIDATION LEGEND -->
+      <div class="card mt-3 shadow-sm">
+        <div class="card-body py-2 px-3">
+          <small class="text-muted">
+            <span class="text-danger fw-bold">*</span> Required fields &nbsp;|&nbsp;
+            <span class="text-success">✅</span> Valid &nbsp;|&nbsp;
+            <span class="text-danger">❌</span> Invalid &nbsp;|&nbsp;
+            Fields are validated in real-time as you type.
+          </small>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+  // ===================================================
+  // FIELD-LEVEL VALIDATION RULES
+  // Each field has its own validation function (regex or logic)
+  // These run on oninput (as user types) and onblur (when user leaves field)
+  // ===================================================
+
+  const validationRules = {
+
+    // NAME: only letters and spaces, minimum 2 characters
+    firstName: value => /^[a-zA-Z ]{2,}$/.test(value.trim()),
+    lastName:  value => /^[a-zA-Z ]{2,}$/.test(value.trim()),
+
+    // EMAIL: standard email regex — checks for @, domain, extension
+    email: value => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()),
+
+    // DATE OF BIRTH: must be selected + age between 15 and 30
+    dob: value => {
+      if (!value) return false;
+      const dob  = new Date(value);
+      const today = new Date();
+      const age  = today.getFullYear() - dob.getFullYear();
+      return age >= 15 && age <= 30;
+    },
+
+    // PHONE: exactly 10 digits, numbers only
+    phone: value => /^[0-9]{10}$/.test(value.trim()),
+
+    // COURSE: must select something (not empty)
+    course: value => value !== "",
+
+    // YEAR: must select something
+    year: value => value !== "",
+
+    // ROLL NUMBER: format like 21COMP045 — 2 digits + 4 letters + 3 digits
+    rollNo: value => /^[0-9]{2}[A-Za-z]{4}[0-9]{3}$/.test(value.trim()),
+
+    // ADDRESS: minimum 10 characters
+    address: value => value.trim().length >= 10,
+
+    // PASSWORD: min 8 chars, must have at least 1 letter AND 1 number
+    password: value => /^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(value),
+
+    // CONFIRM PASSWORD: must match password field
+    confirmPassword: value => value === document.getElementById("password").value && value !== "",
+  };
+
+  // ===================================================
+  // VALIDATE SINGLE FIELD
+  // Called oninput and onblur for each field
+  // Shows green (valid) or red (invalid) feedback below input
+  // ===================================================
+  function validateField(fieldId) {
+    const input    = document.getElementById(fieldId);
+    const errorEl  = document.getElementById(fieldId + "Error");
+    const validEl  = document.getElementById(fieldId + "Valid");
+    const value    = input.value;
+
+    const isValid  = validationRules[fieldId](value);
+
+    if (isValid) {
+      // VALID: green border + green tick message
+      input.classList.remove("invalid-field");
+      input.classList.add("valid-field");
+      if (errorEl) { errorEl.classList.remove("show"); }
+      if (validEl) { validEl.classList.add("show"); }
+    } else {
+      // INVALID: red border + red error message
+      input.classList.remove("valid-field");
+      input.classList.add("invalid-field");
+      if (errorEl) { errorEl.classList.add("show"); }
+      if (validEl) { validEl.classList.remove("show"); }
+    }
+
+    return isValid;
+  }
+
+  // ===================================================
+  // VALIDATE GENDER (radio buttons — special case)
+  // Checks if any radio option is selected
+  // ===================================================
+  function validateGender() {
+    const selected = document.querySelector('input[name="gender"]:checked');
+    const errorEl  = document.getElementById("genderError");
+    const validEl  = document.getElementById("genderValid");
+
+    if (selected) {
+      errorEl.classList.remove("show");
+      validEl.classList.add("show");
+      return true;
+    } else {
+      errorEl.classList.add("show");
+      validEl.classList.remove("show");
+      return false;
+    }
+  }
+
+  // ===================================================
+  // VALIDATE TERMS CHECKBOX (special case)
+  // Checks if checkbox is ticked
+  // ===================================================
+  function validateTerms() {
+    const checked  = document.getElementById("terms").checked;
+    const errorEl  = document.getElementById("termsError");
+    const validEl  = document.getElementById("termsValid");
+
+    if (checked) {
+      errorEl.classList.remove("show");
+      validEl.classList.add("show");
+      return true;
+    } else {
+      errorEl.classList.add("show");
+      validEl.classList.remove("show");
+      return false;
+    }
+  }
+
+  // ===================================================
+  // FORM-LEVEL VALIDATION
+  // Runs ALL field validations at once when Register button is clicked
+  // Returns true only if EVERY field is valid
+  // This is the FORM validation — validates the whole form together
+  // ===================================================
+  function validateForm() {
+    // Validate all regular fields
+    const fields = ["firstName","lastName","email","dob","phone",
+                    "course","year","rollNo","address","password","confirmPassword"];
+
+    // Run each field's validator and collect results
+    const results = fields.map(f => validateField(f));
+
+    // Validate radio (gender) and checkbox (terms) separately
+    const genderOk = validateGender();
+    const termsOk  = validateTerms();
+
+    // Form is valid only if ALL fields pass
+    const allValid = results.every(r => r === true) && genderOk && termsOk;
+    return allValid;
+  }
+
+  // ===================================================
+  // SUBMIT FORM
+  // 1. Run full form validation
+  // 2. If valid: show success message with entered details
+  // 3. If invalid: show error banner at top of form
+  // ===================================================
+  function submitForm() {
+    const formErrorEl = document.getElementById("formError");
+    const successEl   = document.getElementById("successMsg");
+
+    // Run form-level validation
+    const isFormValid = validateForm();
+
+    if (!isFormValid) {
+      // FORM INVALID: show error banner, hide success
+      formErrorEl.classList.remove("d-none");
+      successEl.classList.add("d-none");
+
+      // Scroll to top of form to show error banner
+      formErrorEl.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+
+    // FORM VALID: hide error banner, show success message
+    formErrorEl.classList.add("d-none");
+
+    // Collect submitted data for success message
+    const name   = document.getElementById("firstName").value + " " + document.getElementById("lastName").value;
+    const email  = document.getElementById("email").value;
+    const course = document.getElementById("course").value;
+    const rollNo = document.getElementById("rollNo").value;
+
+    document.getElementById("successDetails").innerHTML =
+      `<strong>${name}</strong> has been registered successfully!<br/>
+       Roll No: <strong>${rollNo}</strong> | Course: <strong>${course}</strong><br/>
+       A confirmation has been sent to <strong>${email}</strong>`;
+
+    successEl.classList.remove("d-none");
+    successEl.scrollIntoView({ behavior: "smooth" });
+
+    // Reset form after 5 seconds
+    setTimeout(() => {
+      resetForm();
+      successEl.classList.add("d-none");
+    }, 5000);
+  }
+
+  // ===================================================
+  // RESET FORM
+  // Clears all inputs AND removes all validation styles/messages
+  // ===================================================
+  function resetForm() {
+    document.getElementById("registrationForm").reset();
+
+    // Remove all valid/invalid border classes from inputs
+    document.querySelectorAll(".form-control, .form-select").forEach(el => {
+      el.classList.remove("valid-field", "invalid-field");
+    });
+
+    // Hide all error and valid messages
+    document.querySelectorAll(".field-error").forEach(el => el.classList.remove("show"));
+    document.querySelectorAll(".valid-icon").forEach(el => el.classList.remove("show"));
+
+    // Hide form-level error and success banners
+    document.getElementById("formError").classList.add("d-none");
+    document.getElementById("successMsg").classList.add("d-none");
+  }
+
+</script>
+</body>
+</html>

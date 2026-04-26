@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Skill Bar Component</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <style>
+    body { background: #1a1a2e; color: #eee; }
+    .skill-card { background: #16213e; border: none; border-radius: 12px; }
+    /* Bootstrap progress bar is used for skill bars */
+    /* We override color with custom gradient */
+    .progress { height: 14px; background: #0f3460; border-radius: 50px; }
+    .progress-bar { background: linear-gradient(90deg, #e94560, #0f3460); border-radius: 50px;
+                    transition: width 1.2s ease-in-out; } /* smooth animation */
+    h1 { color: #e94560; }
+    .skill-percent { color: #e94560; font-weight: bold; }
+    .form-control, .form-control:focus {
+      background: #0f3460; color: white; border-color: #e94560;
+    }
+    .form-control::placeholder { color: #aaa; }
+  </style>
+</head>
+<body>
+
+<div class="container py-4">
+  <h1 class="text-center mb-4">🛠 My Skill Set</h1>
+
+  <!-- SKILL LIST: Bootstrap cards for each skill -->
+  <div id="skillList" class="mb-4"></div>
+
+  <!-- ADD SKILL FORM: Bootstrap input-group -->
+  <div class="card skill-card p-4">
+    <h5 class="text-white mb-3">➕ Add New Skill</h5>
+    <div class="row g-3">
+      <div class="col-md-5">
+        <input type="text" id="skillName" class="form-control"
+          placeholder="Skill name (e.g. JavaScript)"/>
+      </div>
+      <div class="col-md-5">
+        <input type="number" id="skillPercent" class="form-control"
+          placeholder="Proficiency % (0-100)" min="0" max="100"/>
+      </div>
+      <div class="col-md-2">
+        <!-- btn btn-danger: Bootstrap red button -->
+        <button class="btn btn-danger w-100" onclick="addSkill()">+ Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Default skills data
+  const skills = [
+    { name:"HTML & CSS",   percent:90 },
+    { name:"JavaScript",   percent:78 },
+    { name:"React.js",     percent:65 },
+    { name:"Node.js",      percent:55 },
+    { name:"MongoDB",      percent:50 },
+    { name:"Python",       percent:70 },
+  ];
+
+  // ===== CREATE SKILL CARD =====
+  // Uses Bootstrap progress component — reusable for any skill
+  function createSkillBar(name, percent) {
+    const card = document.createElement("div");
+    card.className = "card skill-card p-3 mb-3";
+    card.innerHTML = `
+      <div class="d-flex justify-content-between mb-2">
+        <span class="fw-bold text-white">${name}</span>
+        <span class="skill-percent">${percent}%</span>
+      </div>
+      <!-- Bootstrap progress bar: width starts at 0, animated to percent via JS -->
+      <div class="progress">
+        <div class="progress-bar" role="progressbar"
+             style="width:0%" data-width="${percent}"
+             aria-valuenow="${percent}" aria-valuemin="0" aria-valuemax="100">
+        </div>
+      </div>
+    `;
+    return card;
+  }
+
+  // ===== RENDER ALL SKILLS =====
+  function renderSkills() {
+    const list = document.getElementById("skillList");
+    list.innerHTML = "";
+    skills.forEach(s => list.appendChild(createSkillBar(s.name, s.percent)));
+    // Animate bars after DOM paint
+    setTimeout(() => {
+      document.querySelectorAll(".progress-bar").forEach(bar => {
+        bar.style.width = bar.dataset.width + "%";
+      });
+    }, 100);
+  }
+
+  // ===== ADD SKILL =====
+  function addSkill() {
+    const name = document.getElementById("skillName").value.trim();
+    const percent = parseInt(document.getElementById("skillPercent").value);
+    if (!name || isNaN(percent) || percent < 0 || percent > 100) {
+      alert("Please enter a valid skill name and percentage (0-100)."); return;
+    }
+    skills.push({ name, percent });
+    renderSkills();
+    document.getElementById("skillName").value = "";
+    document.getElementById("skillPercent").value = "";
+  }
+
+  renderSkills();
+</script>
+</body>
+</html>

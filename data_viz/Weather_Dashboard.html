@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weather Dashboard</title>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <!-- LOCAL Chart.js — works offline -->
+  <script src="../node_modules/chart.js/dist/chart.umd.js"></script>
+  <style> body { background: #eaf4fb; } </style>
+</head>
+<body>
+
+<!-- Bootstrap navbar -->
+<nav class="navbar navbar-dark bg-primary shadow mb-4">
+  <div class="container">
+    <span class="navbar-brand fw-bold">🌤️ Weather Dashboard — Pune, Maharashtra</span>
+    <span class="badge bg-light text-dark">Week of April 21–27, 2025</span>
+  </div>
+</nav>
+
+<div class="container pb-4">
+
+  <!-- STAT CARDS: Bootstrap row of 4 summary cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+      <div class="card text-center shadow-sm border-primary">
+        <div class="card-body">
+          <div class="fs-1">🌡️</div>
+          <h5 class="fw-bold text-primary">34°C</h5>
+          <p class="text-muted small mb-0">Avg Max Temp</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 col-6">
+      <div class="card text-center shadow-sm border-info">
+        <div class="card-body">
+          <div class="fs-1">💧</div>
+          <h5 class="fw-bold text-info">52%</h5>
+          <p class="text-muted small mb-0">Avg Humidity</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 col-6">
+      <div class="card text-center shadow-sm border-success">
+        <div class="card-body">
+          <div class="fs-1">🌧️</div>
+          <h5 class="fw-bold text-success">18mm</h5>
+          <p class="text-muted small mb-0">Total Rainfall</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 col-6">
+      <div class="card text-center shadow-sm border-warning">
+        <div class="card-body">
+          <div class="fs-1">💨</div>
+          <h5 class="fw-bold text-warning">14km/h</h5>
+          <p class="text-muted small mb-0">Avg Wind Speed</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARTS: Bootstrap row of 3 chart cards -->
+  <div class="row g-4">
+
+    <!-- LINE CHART: Temperature trend -->
+    <div class="col-md-6">
+      <div class="card shadow p-3">
+        <h6 class="fw-bold mb-3">📈 Temperature Trend (°C) — Line Chart</h6>
+        <canvas id="lineChart" height="180"></canvas>
+      </div>
+    </div>
+
+    <!-- BAR CHART: Rainfall -->
+    <div class="col-md-6">
+      <div class="card shadow p-3">
+        <h6 class="fw-bold mb-3">🌧️ Daily Rainfall (mm) — Bar Chart</h6>
+        <canvas id="barChart" height="180"></canvas>
+      </div>
+    </div>
+
+    <!-- PIE CHART: Weather condition distribution -->
+    <div class="col-md-4">
+      <div class="card shadow p-3">
+        <h6 class="fw-bold mb-3">☀️ Weather Conditions — Pie Chart</h6>
+        <canvas id="pieChart" height="220"></canvas>
+      </div>
+    </div>
+
+    <!-- WEEKLY SUMMARY TABLE -->
+    <div class="col-md-8">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white fw-bold">📋 Weekly Summary</div>
+        <div class="table-responsive">
+          <table class="table table-striped table-hover mb-0 align-middle text-center">
+            <thead class="table-dark">
+              <tr><th>Day</th><th>Condition</th><th>Max °C</th><th>Min °C</th><th>Rain mm</th><th>Humidity</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Mon</td><td>☀️ Sunny</td><td class="text-danger fw-bold">36</td><td>24</td><td>0</td><td>45%</td></tr>
+              <tr><td>Tue</td><td>⛅ Partly Cloudy</td><td class="text-danger fw-bold">34</td><td>23</td><td>2</td><td>50%</td></tr>
+              <tr><td>Wed</td><td>🌧️ Rainy</td><td class="text-danger fw-bold">29</td><td>21</td><td>8</td><td>72%</td></tr>
+              <tr><td>Thu</td><td>🌧️ Rainy</td><td class="text-danger fw-bold">27</td><td>20</td><td>6</td><td>80%</td></tr>
+              <tr><td>Fri</td><td>⛅ Cloudy</td><td class="text-danger fw-bold">31</td><td>22</td><td>2</td><td>60%</td></tr>
+              <tr><td>Sat</td><td>☀️ Sunny</td><td class="text-danger fw-bold">35</td><td>25</td><td>0</td><td>40%</td></tr>
+              <tr><td>Sun</td><td>☀️ Sunny</td><td class="text-danger fw-bold">37</td><td>26</td><td>0</td><td>38%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+  // ===== LINE CHART: Temperature =====
+  // 'line' type — shows trends over time
+  new Chart(document.getElementById("lineChart"), {
+    type: "line",
+    data: {
+      labels: days,
+      datasets: [
+        { label:"Max Temp (°C)", data:[36,34,29,27,31,35,37],
+          borderColor:"#e74c3c", backgroundColor:"rgba(231,76,60,0.1)",
+          fill:true, tension:0.4 },   // tension: curve smoothness
+        { label:"Min Temp (°C)", data:[24,23,21,20,22,25,26],
+          borderColor:"#3498db", backgroundColor:"rgba(52,152,219,0.1)",
+          fill:true, tension:0.4 }
+      ]
+    },
+    options: { responsive:true, plugins:{ legend:{ position:"top" } } }
+  });
+
+  // ===== BAR CHART: Rainfall =====
+  new Chart(document.getElementById("barChart"), {
+    type: "bar",
+    data: {
+      labels: days,
+      datasets: [{
+        label:"Rainfall (mm)",
+        data:[0,2,8,6,2,0,0],
+        backgroundColor:"#3498db",
+        borderRadius:4
+      }]
+    },
+    options: { responsive:true, scales:{ y:{ beginAtZero:true } } }
+  });
+
+  // ===== PIE CHART: Weather conditions =====
+  new Chart(document.getElementById("pieChart"), {
+    type: "pie",
+    data: {
+      labels:["Sunny","Cloudy","Rainy"],
+      datasets:[{
+        data:[3,2,2],
+        backgroundColor:["#f39c12","#95a5a6","#3498db"],
+        borderWidth:2
+      }]
+    },
+    options: { responsive:true, plugins:{ legend:{ position:"bottom" } } }
+  });
+</script>
+</body>
+</html>

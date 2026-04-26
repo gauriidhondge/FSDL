@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weekly Timetable</title>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <style>
+    body { background: #f0f4f8; }
+    /* Subject color codes */
+    .sub-html   { background: #cfe2ff; }
+    .sub-css    { background: #d1e7dd; }
+    .sub-js     { background: #fff3cd; }
+    .sub-node   { background: #f8d7da; }
+    .sub-db     { background: #e2d9f3; }
+    .sub-break  { background: #f8f9fa; color: #aaa; font-style: italic; }
+    .sub-lab    { background: #ffd6a5; }
+    /* Table cell styling */
+    td, th { text-align: center; vertical-align: middle !important; font-size: 14px; }
+    .time-col { background: #2c3e50; color: white; font-weight: 600; font-size: 13px; }
+  </style>
+</head>
+<body>
+
+<div class="container py-4">
+  <h1 class="text-center mb-2">📅 Weekly Class Timetable</h1>
+  <p class="text-center text-muted mb-1">B.E. Computer Engineering — Final Year (Sem VII)</p>
+
+  <!-- COLOR LEGEND using Bootstrap badges -->
+  <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
+    <span class="badge" style="background:#cfe2ff;color:#000">HTML/CSS</span>
+    <span class="badge" style="background:#d1e7dd;color:#000">JavaScript</span>
+    <span class="badge" style="background:#fff3cd;color:#000">Node.js</span>
+    <span class="badge" style="background:#f8d7da;color:#000">DBMS</span>
+    <span class="badge" style="background:#e2d9f3;color:#000">OS</span>
+    <span class="badge" style="background:#ffd6a5;color:#000">Lab</span>
+    <span class="badge bg-secondary">Break / Free</span>
+  </div>
+
+  <!-- TIMETABLE: Bootstrap table-bordered table-hover -->
+  <!-- Uses HTML rowspan and colspan as required by the problem statement -->
+  <div class="table-responsive shadow">
+    <table class="table table-bordered table-hover mb-0">
+
+      <!-- TABLE HEADER -->
+      <thead class="table-dark">
+        <tr>
+          <th style="width:100px">Time</th>
+          <th>Monday</th>
+          <th>Tuesday</th>
+          <th>Wednesday</th>
+          <th>Thursday</th>
+          <th>Friday</th>
+          <th>Saturday</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <!-- ROW 1: 9:00 - 10:00 -->
+        <tr>
+          <td class="time-col">9:00 – 10:00</td>
+          <td class="sub-html">HTML & CSS</td>
+          <td class="sub-js">JavaScript</td>
+          <td class="sub-node">Node.js</td>
+          <td class="sub-html">HTML & CSS</td>
+          <td class="sub-db">DBMS</td>
+          <!-- rowspan=2: Saturday lab spans 2 rows (9:00 to 11:00) -->
+          <td class="sub-lab" rowspan="2">🔬 Full Stack Lab<br/><small>(9:00 – 11:00)</small></td>
+        </tr>
+
+        <!-- ROW 2: 10:00 - 11:00 -->
+        <tr>
+          <td class="time-col">10:00 – 11:00</td>
+          <td class="sub-db">DBMS</td>
+          <td class="sub-html">HTML & CSS</td>
+          <td class="sub-js">JavaScript</td>
+          <td class="sub-node">Node.js</td>
+          <!-- colspan=1 used for OS spanning Thursday + Friday effectively,
+               here rowspan is already handled above for Saturday -->
+          <td class="sub-db">DBMS</td>
+          <!-- Saturday cell already covered by rowspan above -->
+        </tr>
+
+        <!-- BREAK ROW: colspan=7 spans all columns -->
+        <tr>
+          <td class="time-col">11:00 – 11:15</td>
+          <!-- colspan merges all 6 day columns into one "Break" cell -->
+          <td colspan="6" class="sub-break fw-bold">☕ Short Break</td>
+        </tr>
+
+        <!-- ROW 3: 11:15 - 12:15 -->
+        <tr>
+          <td class="time-col">11:15 – 12:15</td>
+          <td class="sub-js">JavaScript</td>
+          <td class="sub-node">Node.js</td>
+          <td class="sub-html">HTML & CSS</td>
+          <!-- rowspan=2: OS lecture on Wednesday spans 2 rows (11:15 – 1:15) -->
+          <td class="sub-db" rowspan="2">OS Theory<br/><small>(11:15 – 1:15)</small></td>
+          <td class="sub-html">HTML & CSS</td>
+          <!-- colspan=1 Saturday lab continues from above (rowspan already done) -->
+          <td class="sub-lab">🔬 DB Lab</td>
+        </tr>
+
+        <!-- ROW 4: 12:15 - 1:15 -->
+        <tr>
+          <td class="time-col">12:15 – 1:15</td>
+          <td class="sub-node">Node.js</td>
+          <td class="sub-db">DBMS</td>
+          <td class="sub-js">JavaScript</td>
+          <!-- Thursday already covered by rowspan above -->
+          <td class="sub-node">Node.js</td>
+          <td class="sub-break">Free</td>
+        </tr>
+
+        <!-- LUNCH ROW: colspan spans all days -->
+        <tr>
+          <td class="time-col">1:15 – 2:00</td>
+          <td colspan="6" class="sub-break fw-bold">🍽️ Lunch Break</td>
+        </tr>
+
+        <!-- ROW 5: 2:00 - 3:00 -->
+        <tr>
+          <td class="time-col">2:00 – 3:00</td>
+          <td class="sub-lab">🔬 JS Lab</td>
+          <td class="sub-js">JavaScript</td>
+          <td class="sub-node">Node.js</td>
+          <td class="sub-html">HTML & CSS</td>
+          <!-- colspan=2: Friday + Saturday free period -->
+          <td colspan="2" class="sub-break">Free / Self Study</td>
+        </tr>
+
+        <!-- ROW 6: 3:00 - 4:00 -->
+        <tr>
+          <td class="time-col">3:00 – 4:00</td>
+          <td class="sub-db">DBMS</td>
+          <!-- colspan=2: Tuesday + Wednesday have combined seminar -->
+          <td colspan="2" class="sub-lab">📊 Seminar / Project</td>
+          <td class="sub-js">JavaScript</td>
+          <td class="sub-node">Node.js</td>
+          <td class="sub-break">—</td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Bootstrap alert for note -->
+  <div class="alert alert-info mt-3 text-center small">
+    ⚠️ This timetable uses HTML <strong>rowspan</strong> (spans multiple rows) and
+    <strong>colspan</strong> (spans multiple columns) attributes.
+  </div>
+</div>
+
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
