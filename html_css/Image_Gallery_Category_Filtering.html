@@ -3,219 +3,123 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Portfolio - Gauri Patil</title>
+  <title>Image Gallery with Category Filtering</title>
   <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
   <style>
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Segoe UI', sans-serif; }
-    /* HERO SECTION */
-    .hero { background: linear-gradient(135deg, #2c3e50, #3498db);
-            color: white; min-height: 100vh;
-            display: flex; align-items: center; }
-    .avatar { width: 150px; height: 150px; border-radius: 50%;
-              background: rgba(255,255,255,0.15);
-              display: flex; align-items: center; justify-content: center;
-              font-size: 70px; margin: 0 auto 20px; border: 4px solid white; }
-    /* Section title style */
-    .section-title { position: relative; display: inline-block; margin-bottom: 40px; }
-    .section-title::after { content: ""; display: block; width: 50px; height: 4px;
-                             background: #0d6efd; margin: 8px auto 0; border-radius: 2px; }
-    /* Project card hover */
-    .project-card { transition: transform 0.3s, box-shadow 0.3s; }
-    .project-card:hover { transform: translateY(-6px); box-shadow: 0 12px 24px rgba(0,0,0,0.12) !important; }
-    /* Skill progress bars */
-    .progress { height: 10px; border-radius: 10px; }
-    section { padding: 80px 0; }
-    .bg-light-blue { background: #f0f4f8; }
+    body { background: #111; color: white; }
+    .gallery-img { height: 180px; display: flex; align-items: center;
+                   justify-content: center; font-size: 60px;
+                   transition: transform 0.4s; }
+    .gallery-item { overflow: hidden; border-radius: 10px; cursor: pointer; position: relative; }
+    .gallery-item:hover .gallery-img { transform: scale(1.1); }
+    /* Overlay on hover */
+    .overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6);
+               opacity: 0; transition: opacity 0.3s;
+               display: flex; flex-direction: column;
+               align-items: center; justify-content: center; }
+    .gallery-item:hover .overlay { opacity: 1; }
+    .modal-content { background: #222; color: white; border: none; }
   </style>
 </head>
 <body>
 
-<!-- ===== NAVBAR: Bootstrap sticky-top navbar ===== -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow">
-  <div class="container">
-    <a class="navbar-brand fw-bold">Gauri Patil</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navMenu">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-        <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
-        <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
-        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-      </ul>
+<div class="container py-4">
+  <h1 class="text-center mb-2">📸 Image Gallery</h1>
+  <p class="text-center text-muted mb-4">Click category to filter · Click image to enlarge</p>
+
+  <!-- FILTER BAR: Bootstrap btn-group -->
+  <div class="d-flex flex-wrap justify-content-center gap-2 mb-4" id="filterBar">
+    <button class="btn btn-light active" onclick="filterGallery('All', this)">All</button>
+  </div>
+
+  <!-- GALLERY GRID -->
+  <div class="row g-3" id="galleryGrid"></div>
+</div>
+
+<!-- Bootstrap MODAL for lightbox -->
+<div class="modal fade" id="galleryModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center p-4">
+      <button class="btn-close btn-close-white ms-auto mb-3" data-bs-dismiss="modal"></button>
+      <div id="modal-emoji" style="font-size:80px" class="mb-3"></div>
+      <h4 id="modal-title"></h4>
+      <p class="text-muted" id="modal-desc"></p>
+      <span class="badge bg-primary" id="modal-cat"></span>
     </div>
   </div>
-</nav>
-
-<!-- ===== HERO / ABOUT SECTION ===== -->
-<section class="hero text-center" id="about">
-  <div class="container">
-    <div class="avatar">👩‍💻</div>
-    <h1 class="display-5 fw-bold mb-2">Gauri Patil</h1>
-    <p class="fs-5 opacity-75 mb-3">Full Stack Web Developer | B.E. Computer Engineering</p>
-    <p class="opacity-75 mb-4" style="max-width:600px;margin:0 auto">
-      Passionate about building beautiful, responsive web applications. I love turning ideas into real digital experiences using HTML, CSS, JavaScript, and the MERN stack.
-    </p>
-    <!-- Bootstrap badges for quick skill tags -->
-    <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
-      <span class="badge bg-light text-dark">HTML/CSS</span>
-      <span class="badge bg-light text-dark">JavaScript</span>
-      <span class="badge bg-light text-dark">React.js</span>
-      <span class="badge bg-light text-dark">Node.js</span>
-      <span class="badge bg-light text-dark">MongoDB</span>
-    </div>
-    <div class="d-flex gap-3 justify-content-center">
-      <a href="#projects" class="btn btn-light btn-lg fw-bold">View Projects</a>
-      <a href="#contact" class="btn btn-outline-light btn-lg">Contact Me</a>
-    </div>
-  </div>
-</section>
-
-<!-- ===== SKILLS SECTION ===== -->
-<section class="bg-light-blue" id="skills">
-  <div class="container">
-    <h2 class="text-center section-title">🛠 My Skills</h2>
-    <div class="row g-4">
-      <!-- Technical skills with Bootstrap progress bars -->
-      <div class="col-md-6">
-        <h5 class="fw-bold mb-3">Technical Skills</h5>
-        <div class="mb-3"><div class="d-flex justify-content-between mb-1"><span>HTML & CSS</span><span class="text-primary fw-bold">90%</span></div>
-          <div class="progress"><div class="progress-bar" style="width:90%"></div></div></div>
-        <div class="mb-3"><div class="d-flex justify-content-between mb-1"><span>JavaScript</span><span class="text-primary fw-bold">80%</span></div>
-          <div class="progress"><div class="progress-bar bg-success" style="width:80%"></div></div></div>
-        <div class="mb-3"><div class="d-flex justify-content-between mb-1"><span>React.js</span><span class="text-primary fw-bold">70%</span></div>
-          <div class="progress"><div class="progress-bar bg-info" style="width:70%"></div></div></div>
-        <div class="mb-3"><div class="d-flex justify-content-between mb-1"><span>Node.js</span><span class="text-primary fw-bold">65%</span></div>
-          <div class="progress"><div class="progress-bar bg-warning" style="width:65%"></div></div></div>
-        <div class="mb-3"><div class="d-flex justify-content-between mb-1"><span>MongoDB</span><span class="text-primary fw-bold">60%</span></div>
-          <div class="progress"><div class="progress-bar bg-danger" style="width:60%"></div></div></div>
-      </div>
-      <!-- Tools as Bootstrap badges -->
-      <div class="col-md-6">
-        <h5 class="fw-bold mb-3">Tools & Soft Skills</h5>
-        <div class="d-flex flex-wrap gap-2 mb-4">
-          <span class="badge bg-dark p-2">Git & GitHub</span>
-          <span class="badge bg-primary p-2">VS Code</span>
-          <span class="badge bg-success p-2">Postman</span>
-          <span class="badge bg-info text-dark p-2">Figma</span>
-          <span class="badge bg-warning text-dark p-2">Linux</span>
-          <span class="badge bg-secondary p-2">npm</span>
-        </div>
-        <!-- Bootstrap list-group for soft skills -->
-        <ul class="list-group">
-          <li class="list-group-item">✅ Problem Solving</li>
-          <li class="list-group-item">✅ Team Collaboration</li>
-          <li class="list-group-item">✅ Communication</li>
-          <li class="list-group-item">✅ Time Management</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== PROJECTS SECTION ===== -->
-<section id="projects">
-  <div class="container">
-    <h2 class="text-center section-title">💼 Projects</h2>
-    <div class="row g-4">
-      <div class="col-md-4">
-        <div class="card project-card shadow h-100">
-          <div style="background:#e3f2fd;height:120px;display:flex;align-items:center;justify-content:center;font-size:50px;">🛒</div>
-          <div class="card-body">
-            <h5 class="fw-bold">Shopping Cart System</h5>
-            <p class="text-muted small">Dynamic cart with add/remove items, quantity controls, and total price calculation.</p>
-            <div class="d-flex gap-1 flex-wrap">
-              <span class="badge bg-warning text-dark">HTML</span>
-              <span class="badge bg-info text-dark">CSS</span>
-              <span class="badge bg-success">JavaScript</span>
-            </div>
-          </div>
-          <div class="card-footer bg-white border-0">
-            <a href="#" class="btn btn-sm btn-outline-primary">View Project</a>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card project-card shadow h-100">
-          <div style="background:#e8f5e9;height:120px;display:flex;align-items:center;justify-content:center;font-size:50px;">📊</div>
-          <div class="card-body">
-            <h5 class="fw-bold">Student Record Management</h5>
-            <p class="text-muted small">Full-stack CRUD application to manage student records with MongoDB backend.</p>
-            <div class="d-flex gap-1 flex-wrap">
-              <span class="badge bg-primary">Node.js</span>
-              <span class="badge bg-danger">Express</span>
-              <span class="badge bg-success">MongoDB</span>
-            </div>
-          </div>
-          <div class="card-footer bg-white border-0">
-            <a href="#" class="btn btn-sm btn-outline-primary">View Project</a>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card project-card shadow h-100">
-          <div style="background:#fce4ec;height:120px;display:flex;align-items:center;justify-content:center;font-size:50px;">📝</div>
-          <div class="card-body">
-            <h5 class="fw-bold">Quiz Application</h5>
-            <p class="text-muted small">Interactive MCQ quiz with score tracking, instant feedback, and review screen.</p>
-            <div class="d-flex gap-1 flex-wrap">
-              <span class="badge bg-warning text-dark">HTML</span>
-              <span class="badge bg-info text-dark">Bootstrap</span>
-              <span class="badge bg-success">JavaScript</span>
-            </div>
-          </div>
-          <div class="card-footer bg-white border-0">
-            <a href="#" class="btn btn-sm btn-outline-primary">View Project</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== CONTACT SECTION ===== -->
-<section class="bg-light-blue" id="contact">
-  <div class="container">
-    <h2 class="text-center section-title">📬 Contact Me</h2>
-    <div class="row g-4 justify-content-center">
-      <div class="col-md-5">
-        <!-- Contact info using Bootstrap list-group -->
-        <div class="list-group shadow">
-          <div class="list-group-item"><span class="fw-bold">📧 Email:</span> gauri.patil@email.com</div>
-          <div class="list-group-item"><span class="fw-bold">📞 Phone:</span> +91 9876543210</div>
-          <div class="list-group-item"><span class="fw-bold">📍 Location:</span> Pune, Maharashtra</div>
-          <div class="list-group-item"><span class="fw-bold">🔗 GitHub:</span> github.com/gauripatil</div>
-          <div class="list-group-item"><span class="fw-bold">🔗 LinkedIn:</span> linkedin.com/in/gauripatil</div>
-        </div>
-      </div>
-      <div class="col-md-5">
-        <!-- Contact form using Bootstrap form controls -->
-        <div class="card shadow">
-          <div class="card-body p-4">
-            <div class="mb-3">
-              <input type="text" class="form-control" placeholder="Your Name"/>
-            </div>
-            <div class="mb-3">
-              <input type="email" class="form-control" placeholder="Your Email"/>
-            </div>
-            <div class="mb-3">
-              <textarea class="form-control" rows="4" placeholder="Your Message"></textarea>
-            </div>
-            <button class="btn btn-primary w-100">Send Message 📨</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer class="bg-dark text-white text-center py-3">
-  <p class="mb-0 small">© 2025 Gauri Dhondge</p>
-</footer>
+</div>
 
 <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const images = [
+    { emoji:"🏔️", title:"Mountain Peak",  desc:"Snow-capped peaks at dawn",       color:"#1a1a2e", cat:"Nature"   },
+    { emoji:"🌊", title:"Ocean Waves",     desc:"Serene ocean view at sunset",     color:"#0d3b6e", cat:"Nature"   },
+    { emoji:"🌸", title:"Cherry Blossom", desc:"Spring petals in full bloom",     color:"#4a1040", cat:"Nature"   },
+    { emoji:"🌆", title:"City Skyline",   desc:"Downtown at golden hour",         color:"#2d1b00", cat:"Urban"    },
+    { emoji:"🏛️", title:"Old Temple",    desc:"Architecture of the ages",        color:"#1c3a1c", cat:"Urban"    },
+    { emoji:"🚂", title:"Train Station",  desc:"Busy city railway station",       color:"#1a1a1a", cat:"Urban"    },
+    { emoji:"🦁", title:"Lion Portrait",  desc:"King of the savanna",             color:"#3b2000", cat:"Wildlife" },
+    { emoji:"🐬", title:"Dolphin Play",   desc:"Dolphins leaping in open sea",    color:"#003d5b", cat:"Wildlife" },
+    { emoji:"🦋", title:"Butterfly",      desc:"Colorful wings in the garden",    color:"#1a2a1a", cat:"Wildlife" },
+    { emoji:"🌌", title:"Milky Way",      desc:"Galaxy in long exposure shot",    color:"#0a0a1e", cat:"Space"    },
+    { emoji:"🌙", title:"Full Moon",      desc:"Bright full moon over the sea",   color:"#0d1b2a", cat:"Space"    },
+    { emoji:"⭐", title:"Starry Night",   desc:"Thousands of stars in the sky",   color:"#050510", cat:"Space"    },
+  ];
+
+  let activeFilter = "All";
+
+  function buildFilters() {
+    const bar = document.getElementById("filterBar");
+    const cats = [...new Set(images.map(i => i.cat))];
+    cats.forEach(cat => {
+      const btn = document.createElement("button");
+      btn.className = "btn btn-outline-light";
+      btn.textContent = cat;
+      btn.onclick = () => filterGallery(cat, btn);
+      bar.appendChild(btn);
+    });
+  }
+
+  function renderGallery() {
+    const grid = document.getElementById("galleryGrid");
+    grid.innerHTML = "";
+    const filtered = activeFilter === "All" ? images : images.filter(i => i.cat === activeFilter);
+    filtered.forEach((img, i) => {
+      const col = document.createElement("div");
+      col.className = "col-md-3 col-sm-4 col-6";
+      col.innerHTML = `
+        <div class="gallery-item" onclick="openModal('${img.emoji}','${img.title}','${img.desc}','${img.cat}')">
+          <div class="gallery-img" style="background:${img.color}">${img.emoji}</div>
+          <div class="overlay text-white text-center">
+            <span class="badge bg-primary mb-1">${img.cat}</span>
+            <h6 class="fw-bold">${img.title}</h6>
+            <small>${img.desc}</small>
+          </div>
+        </div>
+      `;
+      grid.appendChild(col);
+    });
+  }
+
+  function filterGallery(cat, btn) {
+    activeFilter = cat;
+    document.querySelectorAll("#filterBar .btn").forEach(b => {
+      b.className = "btn btn-outline-light";
+    });
+    btn.className = "btn btn-light active";
+    renderGallery();
+  }
+
+  function openModal(emoji, title, desc, cat) {
+    document.getElementById("modal-emoji").textContent = emoji;
+    document.getElementById("modal-title").textContent = title;
+    document.getElementById("modal-desc").textContent  = desc;
+    document.getElementById("modal-cat").textContent   = cat;
+    new bootstrap.Modal(document.getElementById("galleryModal")).show();
+  }
+
+  buildFilters();
+  renderGallery();
+</script>
 </body>
 </html>
